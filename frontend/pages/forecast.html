@@ -40,7 +40,7 @@
 <script>
 document.getElementById("logoutLink").addEventListener("click", async function(event) {
  event.preventDefault();
- try { await fetch((window.BUSINESSPILOT_API_URL || localStorage.getItem("api_url") || "https://businesspilot-ai-backend.onrender.com") + "/logout", {method:"POST",headers:{"Authorization":"Bearer "+(localStorage.getItem("access_token")||"")} }); } catch (_) {}
+ try { await fetch((window.BUSINESSPILOT_API_URL || localStorage.getItem("api_url") || "https://businesspilot-ai-backend-yf1s.onrender.com") + "/logout", {method:"POST",headers:{"Authorization":"Bearer "+(localStorage.getItem("access_token")||"")} }); } catch (_) {}
  ["access_token","user","uploaded_filename","analysis_result","initial_cash"].forEach(k=>localStorage.removeItem(k));
  window.location.href="login.html";
 });
