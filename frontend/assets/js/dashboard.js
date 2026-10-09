@@ -129,13 +129,12 @@ function loadAnalysisResult() {
 
 
     if (!raw) {
-
-        console.warn(
-            "No analysis result"
-        );
-
+        console.warn("No analysis result in localStorage.analysis_result");
+        const scoreElement = document.getElementById("healthScore");
+        const statusElement = document.getElementById("healthStatus");
+        if (scoreElement) scoreElement.textContent = "— /100";
+        if (statusElement) statusElement.textContent = "ยังไม่มีผลวิเคราะห์ กรุณาอัปโหลดและกดวิเคราะห์อีกครั้ง";
         return;
-
     }
 
 
