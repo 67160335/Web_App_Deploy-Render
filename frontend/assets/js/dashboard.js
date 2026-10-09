@@ -164,7 +164,10 @@ function loadAnalysisResult() {
         const score =
             Number(
                 health.score ??
-                data.health_score ??\n                data.business_health_score ??\n                data.business_health?.score ??\n                data.health?.score ??
+                data.health_score ??
+                data.business_health_score ??
+                data.business_health?.score ??
+                data.health?.score ??
                 0
             );
 
