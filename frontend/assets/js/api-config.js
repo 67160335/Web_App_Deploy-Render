@@ -1,0 +1,1 @@
+window.BUSINESSPILOT_API_URL = 'https://businesspilot-ai-backend.onrender.com';

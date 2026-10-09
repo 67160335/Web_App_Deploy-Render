@@ -114,6 +114,7 @@
 
 </style>
 
+<script src="../assets/js/api-config.js"></script>
 </head>
 
 
@@ -903,14 +904,21 @@ analyzeBtn.addEventListener(
         analyzeBtn.disabled = true;
         status.textContent = "กำลังอัปโหลดไฟล์ทั้งหมด...";
         try {
-            const formData = new FormData();
-            files.forEach(file => formData.append("files", file));
-            const uploadResponse = await fetch(`${API_URL}/upload-multiple`, {
-                method: "POST", headers: { "Authorization": `Bearer ${token}` }, body: formData
-            });
-            const uploadResult = await uploadResponse.json().catch(() => ({}));
-            if (!uploadResponse.ok) throw new Error(typeof uploadResult.detail === "string" ? uploadResult.detail : JSON.stringify(uploadResult.detail || "Upload failed"));
-            if (!Array.isArray(uploadResult.files) || uploadResult.files.length !== mappings.length) throw new Error("Backend ส่งข้อมูลไฟล์กลับมาไม่ครบ");
+            // Render backend exposes POST /upload for one CSV at a time.
+            const uploadedFiles = [];
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append("file", file);
+                const uploadResponse = await fetch(`${API_URL}/upload`, {
+                    method: "POST", headers: { "Authorization": `Bearer ${token}` }, body: formData
+                });
+                const uploadResult = await uploadResponse.json().catch(() => ({}));
+                if (!uploadResponse.ok) throw new Error(typeof uploadResult.detail === "string" ? uploadResult.detail : JSON.stringify(uploadResult.detail || "Upload failed"));
+                if (!uploadResult.filename) throw new Error("Backend did not return a filename for " + file.name);
+                uploadedFiles.push({ filename: uploadResult.filename, original_name: file.name, columns: uploadResult.columns || [] });
+            }
+            const uploadResult = { files: uploadedFiles };
+            if (uploadResult.files.length !== mappings.length) throw new Error("Backend returned an incomplete file list");
             mappings.forEach((mapping, index) => { mapping.filename = uploadResult.files[index].filename; });
             localStorage.setItem("uploaded_filename", uploadResult.files[0].filename);
             status.textContent = "อัปโหลดครบแล้ว กำลังรวมข้อมูลและวิเคราะห์...";
