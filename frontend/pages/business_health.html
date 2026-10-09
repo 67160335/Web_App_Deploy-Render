@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>
+    BusinessPilot AI | Business Health
+</title>
+
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+
+<!-- แก้ Path ให้ถูกกับโฟลเดอร์ F -->
+<link
+    rel="stylesheet"
+    href="../assets/css/dashboard.css">
+
+<link
+    rel="stylesheet"
+    href="../assets/css/business_health.css">
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-container">
+
+
+<!-- Sidebar -->
+
+<aside class="sidebar">
+<div class="logo-area"><div class="logo">AI</div><div><h1>BusinessPilot</h1><p>AI Platform</p></div></div>
+<nav class="menu" aria-label="Main navigation">
+<a href="dashboard.html" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+<a href="upload_data.html" class="menu-item"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Data</span></a>
+<a href="business_health.html" class="menu-item"><i class="fa-solid fa-heart-pulse"></i><span>Business Health</span></a>
+<a href="forecast.html" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Forecast</span></a>
+<a href="scenario.html" class="menu-item"><i class="fa-solid fa-sliders"></i><span>Scenario</span></a>
+<a href="recommendation.html" class="menu-item"><i class="fa-solid fa-robot"></i><span>AI Recommendation</span></a>
+<a href="report.html" class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+<a href="notification.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+<a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</nav>
+<div class="logout"><a href="login.html" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></div>
+</aside>
+
+
+
+<!-- Main -->
+
+<main class="main-content">
+
+
+<header class="topbar">
+
+
+<div>
+
+
+<h2>
+Business Health Analysis
+</h2>
+
+
+<p>
+AI-powered financial and operational analysis
+</p>
+
+
+</div>
+
+
+</header>
+
+
+
+<!-- Score -->
+
+<div class="health-grid mt-8">
+
+
+<div class="glass score-card">
+
+
+<h3>
+Business Health Score
+</h3>
+
+
+<div class="score-circle">
+
+
+<div class="score-value" id="healthScoreValue">
+0
+<span>/100</span>
+</div>
+
+
+</div>
+
+
+<div class="health-status" id="healthStatus">
+<i class="fa-solid fa-circle-check"></i>
+<span id="healthStatusText">Waiting for analysis</span>
+</div>
+
+
+<p class="score-description" id="healthDescription">
+Upload and analyze a CSV to see your current business health.
+</p>
+
+
+</div>
+
+
+
+<div class="glass ai-card">
+
+
+<h3>
+AI Summary
+</h3>
+
+
+<ul id="healthSummaryList">
+<li>Waiting for analysis...</li>
+</ul>
+
+
+</div>
+
+
+</div>
+
+
+
+<!-- KPI -->
+
+<div
+class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-8">
+
+
+<div class="glass">
+
+
+<p>
+Total Revenue
+</p>
+
+
+<h2 id="healthRevenueValue">฿0</h2>
+<span id="healthRevenueTrend" class="positive">No analysis yet</span>
+
+
+</div>
+
+
+
+<div class="glass">
+
+
+<p>
+Total Expense
+</p>
+
+
+<h2 id="healthExpenseValue">฿0</h2>
+<span id="healthExpenseTrend" class="negative">No analysis yet</span>
+
+
+</div>
+
+
+
+<div class="glass">
+
+
+<p>
+Net Profit
+</p>
+
+
+<h2 id="healthProfitValue">฿0</h2>
+<span id="healthProfitStatus" class="positive">No analysis yet</span>
+
+
+</div>
+
+
+
+<div class="glass">
+
+
+<p>
+Cash Runway
+</p>
+
+
+<h2 id="healthRunwayValue">N/A</h2>
+<span id="healthRunwayStatus" class="warning">No analysis yet</span>
+
+
+</div>
+
+
+</div>
+
+
+
+</main>
+
+
+</div>
+
+
+
+<!-- แก้ Path JS -->
+
+<script
+    src="../assets/js/business_health.js">
+</script>
+
+
+</body>
+
+</html>

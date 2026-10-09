@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0">
+
+<title>
+    BusinessPilot AI | Upload Data
+</title>
+
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+
+<!-- Font Awesome -->
+<link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+
+<!-- Google Font -->
+<link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+
+<!-- CSS -->
+<link
+    rel="stylesheet"
+    href="../assets/css/dashboard.css">
+
+<link
+    rel="stylesheet"
+    href="../assets/css/upload_data.css">
+
+
+<style>
+
+.cash-box {
+
+    max-width: 560px;
+
+    margin: 24px auto 0;
+
+}
+
+.cash-box input {
+
+    width: 100%;
+
+    background: #0f172a;
+
+    color: white;
+
+    border: 1px solid #334155;
+
+    border-radius: 12px;
+
+    padding: 14px 16px;
+
+    outline: none;
+
+}
+
+.cash-box input:focus {
+
+    border-color: #06b6d4;
+
+}
+
+
+#fileName {
+
+    margin-top: 14px;
+
+    color: #94a3b8;
+
+}
+
+
+#analyzeStatus {
+
+    margin-top: 18px;
+
+    text-align: center;
+
+    color: #94a3b8;
+
+}
+
+
+#analyzeBtn:disabled {
+
+    opacity: .5;
+
+    cursor: not-allowed;
+
+}
+
+
+.drag-over {
+
+    border-color: #06b6d4 !important;
+
+    background: rgba(6,182,212,.08);
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div class="dashboard-container">
+
+
+<!-- SIDEBAR -->
+
+<aside class="sidebar">
+
+
+<div class="logo-area">
+
+    <div class="logo">
+        AI
+    </div>
+
+    <div>
+
+        <h1>
+            BusinessPilot
+        </h1>
+
+        <p>
+            AI Platform
+        </p>
+
+    </div>
+
+</div>
+
+
+<nav class="menu">
+
+
+<a
+    href="dashboard.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-house"></i>
+
+    <span>
+        Dashboard
+    </span>
+
+</a>
+
+
+<a
+    href="upload_data.html"
+    class="menu-item active">
+
+    <i class="fa-solid fa-file-arrow-up"></i>
+
+    <span>
+        Upload Data
+    </span>
+
+</a>
+
+
+<a
+    href="business_health.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-heart-pulse"></i>
+
+    <span>
+        Business Health
+    </span>
+
+</a>
+
+
+<a
+    href="forecast.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-chart-line"></i>
+
+    <span>
+        Forecast
+    </span>
+
+</a>
+
+
+<a
+    href="scenario.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-sliders"></i>
+
+    <span>
+        Scenario
+    </span>
+
+</a>
+
+
+<a
+    href="recommendation.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-robot"></i>
+
+    <span>
+        AI Recommendation
+    </span>
+
+</a>
+
+
+<a
+    href="report.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-file-lines"></i>
+
+    <span>
+        Reports
+    </span>
+
+</a>
+
+
+<a
+    href="notification.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-bell"></i>
+
+    <span>
+        Notifications
+    </span>
+
+</a>
+
+
+<a
+    href="settings.html"
+    class="menu-item">
+
+    <i class="fa-solid fa-gear"></i>
+
+    <span>
+        Settings
+    </span>
+
+</a>
+
+
+</nav>
+
+
+<div class="logout">
+
+    <a
+        href="#"
+        id="logoutLink">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        Logout
+
+    </a>
+
+</div>
+
+
+</aside>
+
+
+
+<!-- MAIN -->
+
+<main class="main-content">
+
+
+<header class="topbar">
+
+<div>
+
+    <h2>
+        Upload Business Data
+    </h2>
+
+    <p>
+        Upload CSV file for AI analysis
+    </p>
+
+</div>
+
+</header>
+
+
+
+<!-- UPLOAD CARD -->
+
+<div class="glass mt-8">
+
+
+<h2
+    class="text-2xl font-semibold mb-6">
+
+    Upload Dataset
+
+</h2>
+
+
+
+<div
+    id="dropArea"
+    class="upload-area">
+
+
+<i
+    class="fa-solid fa-cloud-arrow-up upload-icon">
+</i>
+
+
+<h3>
+    เลือกหลายไฟล์ CSV หรือ Excel
+</h3>
+
+
+<p>
+    รองรับ .csv, .xlsx และ .xls รวมถึงหลายชีตในไฟล์ Excel
+</p>
+
+
+<input type="file" id="fileInput" accept=".csv" multiple hidden>
+
+
+<button
+    id="browseBtn"
+    type="button">
+
+    Choose File
+
+</button>
+
+
+<div id="fileSelectionSummary" class="file-selection-summary" aria-live="polite">
+    <span class="file-count-badge"><i class="fa-solid fa-file-csv"></i> <strong id="selectedFileCount">0</strong> ไฟล์</span>
+    <p id="fileName">ยังไม่ได้เลือกไฟล์</p>
+    <ul id="selectedFileList" class="selected-file-list" hidden></ul>
+</div>
+
+
+</div>
+
+
+
+<!-- CSV COLUMN MAPPING -->
+<div id="mappingPanel" class="glass mt-6 p-6" hidden>
+    <div class="mapping-heading">
+        <span class="mapping-heading-icon"><i class="fa-solid fa-table-columns"></i></span>
+        <div>
+            <h3 class="text-xl font-semibold mb-2">จับคู่คอลัมน์ข้อมูล</h3>
+            <p class="text-sm text-gray-400 mb-4">กำหนดว่าคอลัมน์ใดเป็นวันที่ จากนั้นเลือกคอลัมน์รายรับและรายจ่ายที่ต้องการรวมยอดได้หลายรายการ ระบบจะนำค่าที่เลือกมาคำนวณยอดรวมและกำไรให้อัตโนมัติ</p>
+        </div>
+    </div>
+    <div id="mappingSources" class="grid grid-cols-1 md:grid-cols-2 gap-5 mapping-grid"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-5 mapping-grid" hidden style="display:none !important;">
+        <label class="block text-sm">คอลัมน์วันที่
+            <span class="mapping-hint">เลือกคอลัมน์วันที่ได้เพียง 1 รายการ</span>
+            <div class="multi-dropdown" data-select-id="dateColumn" data-single-select="true">
+                <button type="button" class="multi-dropdown-trigger" aria-expanded="false"><span class="multi-dropdown-label">เลือกคอลัมน์วันที่</span><i class="fa-solid fa-chevron-down"></i></button>
+                <div class="multi-dropdown-menu" hidden></div>
+                <select id="dateColumn" class="mapping-select mapping-native-select" aria-label="คอลัมน์วันที่"></select>
+            </div>
+        </label>
+        <label class="block text-sm">คอลัมน์รายรับ
+            <span class="mapping-hint">เลือกทุกคอลัมน์ที่เป็นรายรับ เพื่อรวมยอดเข้าด้วยกัน</span>
+            <div class="multi-dropdown" data-select-id="revenueColumn">
+                <button type="button" class="multi-dropdown-trigger" aria-expanded="false"><span class="multi-dropdown-label">เลือกคอลัมน์รายรับ</span><i class="fa-solid fa-chevron-down"></i></button>
+                <div class="multi-dropdown-menu" hidden></div>
+                <select id="revenueColumn" class="mapping-select mapping-native-select" multiple aria-label="คอลัมน์รายรับ"></select>
+            </div>
+        </label>
+        <label class="block text-sm">คอลัมน์รายจ่าย
+            <span class="mapping-hint">เลือกทุกคอลัมน์ที่เป็นรายจ่าย เพื่อนำไปหักจากรายรับ</span>
+            <div class="multi-dropdown" data-select-id="expenseColumn">
+                <button type="button" class="multi-dropdown-trigger" aria-expanded="false"><span class="multi-dropdown-label">เลือกคอลัมน์รายจ่าย</span><i class="fa-solid fa-chevron-down"></i></button>
+                <div class="multi-dropdown-menu" hidden></div>
+                <select id="expenseColumn" class="mapping-select mapping-native-select" multiple aria-label="คอลัมน์รายจ่าย"></select>
+            </div>
+        </label>
+        <select id="profitColumn" class="mapping-select" hidden aria-hidden="true"><option value="__calculated__" selected>Calculate automatically</option></select>
+    </div>
+</div>
+
+<!-- INITIAL CASH -->
+
+<div class="cash-box">
+
+
+<label
+    class="block text-sm text-gray-300 mb-2">
+
+    Initial Cash
+
+</label>
+
+
+<input
+    id="initialCash"
+    type="number"
+    min="0"
+    step="1000"
+    value="500000"
+    placeholder="500000">
+
+
+<p
+    class="text-gray-500 text-sm mt-2">
+
+    เงินสดเริ่มต้นสำหรับคำนวณ
+    Cash Runway
+
+</p>
+
+
+</div>
+
+
+
+<!-- ANALYZE -->
+
+<button
+    id="analyzeBtn"
+    type="button"
+    disabled
+    class="block mx-auto mt-8
+    px-8 py-4 rounded-xl
+    font-semibold
+    bg-gradient-to-r
+    from-cyan-500
+    to-blue-600
+    hover:opacity-90
+    transition">
+
+    <i
+        class="fa-solid fa-chart-line mr-2">
+    </i>
+
+    Upload & Analyze Business
+
+</button>
+
+
+<p
+    id="analyzeStatus">
+
+</p>
+
+
+</div>
+
+
+</main>
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   API CONFIG
+========================================= */
+
+const IS_LOCAL_FRONTEND =
+    window.location.protocol === "file:" ||
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+
+const API_URL = window.BUSINESSPILOT_API_URL || (IS_LOCAL_FRONTEND ? "http://localhost:8000" : "https://businesspilot-ai-backend.onrender.com");
+
+
+/* =========================================
+   CHECK LOGIN
+========================================= */
+
+const token =
+    localStorage.getItem(
+        "access_token"
+    );
+
+
+if (!token) {
+
+    window.location.href =
+        "login.html";
+
+}
+
+
+/* =========================================
+   ELEMENTS
+========================================= */
+
+const fileInput =
+    document.getElementById(
+        "fileInput"
+    );
+
+const browseBtn =
+    document.getElementById(
+        "browseBtn"
+    );
+
+const dropArea =
+    document.getElementById(
+        "dropArea"
+    );
+
+const fileName = document.getElementById("fileName");
+const selectedFileCount = document.getElementById("selectedFileCount");
+const selectedFileList = document.getElementById("selectedFileList");
+
+function updateSelectedFiles(files) {
+    const list = Array.from(files || []);
+    selectedFileCount.textContent = String(list.length);
+    fileName.textContent = list.length
+        ? `เลือกแล้ว ${list.length} ไฟล์`
+        : "ยังไม่ได้เลือกไฟล์";
+    selectedFileList.replaceChildren();
+    selectedFileList.hidden = list.length === 0;
+    for (const file of list) {
+        const item = document.createElement("li");
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-file-lines";
+        const name = document.createElement("span");
+        name.textContent = `${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        item.append(icon, name);
+        selectedFileList.appendChild(item);
+    }
+}
+
+const analyzeBtn =
+    document.getElementById(
+        "analyzeBtn"
+    );
+
+const status =
+    document.getElementById(
+        "analyzeStatus"
+    );
+
+const mappingPanel = document.getElementById("mappingPanel");
+const mappingSelects = {
+    date_column: document.getElementById("dateColumn"),
+    revenue_column: document.getElementById("revenueColumn"),
+    expense_column: document.getElementById("expenseColumn"),
+    profit_column: document.getElementById("profitColumn")
+};
+
+function parseCsvHeader(line) {
+    const values = [];
+    let value = "";
+    let quoted = false;
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"' && quoted && line[i + 1] === '"') {
+            value += '"';
+            i++;
+        } else if (char === '"') {
+            quoted = !quoted;
+        } else if (char === "," && !quoted) {
+            values.push(value.trim());
+            value = "";
+        } else {
+            value += char;
+        }
+    }
+    values.push(value.trim());
+    return values.map((item) => item.replace(/^\uFEFF/, "")).filter(Boolean);
+}
+
+let detectedFileSchemas = [];
+
+async function prepareColumnMapping(files) {
+    const selectedFiles = Array.from(files || []);
+    const container = document.getElementById("mappingSources");
+    container.replaceChildren();
+    if (!selectedFiles.length) throw new Error("กรุณาเลือกไฟล์ CSV");
+    detectedFileSchemas = [];
+    const union = new Set();
+    for (const file of selectedFiles) {
+        if (!file.name.toLowerCase().endsWith(".csv")) throw new Error(`รองรับเฉพาะไฟล์ CSV: ${file.name}`);
+        const header = (await file.slice(0, 65536).text()).split(/\r?\n/, 1)[0];
+        const columns = parseCsvHeader(header);
+        if (!columns.length) throw new Error(`ไม่พบหัวคอลัมน์ในไฟล์ ${file.name}`);
+        detectedFileSchemas.push({ filename: file.name, columns });
+        columns.forEach(column => union.add(column));
+    }
+    const allColumns = Array.from(union);
+    const card = document.createElement("section");
+    card.className = "source-mapping-card global-mapping-card";
+    const title = document.createElement("h4"); title.className = "source-mapping-title"; title.textContent = "จับคู่คอลัมน์รวมจากทุกไฟล์"; card.appendChild(title);
+    const note = document.createElement("p"); note.className = "mapping-hint"; note.textContent = "ระบบรวมรายชื่อคอลัมน์ที่พบในทุกไฟล์ และตรวจจับคอลัมน์วันที่ของแต่ละไฟล์ให้อัตโนมัติ ไม่ต้องเลือกวันที่เอง"; card.appendChild(note);
+    const mappingFields = document.createElement("div");
+    mappingFields.className = "global-mapping-fields";
+    const addSelect = (key, labelText, pattern, placeholder) => {
+        const label = document.createElement("label");
+        label.className = "source-mapping-field";
+        const caption = document.createElement("span");
+        caption.className = "source-mapping-label";
+        caption.textContent = labelText;
+        label.appendChild(caption);
+        const dropdown = document.createElement("div");
+        dropdown.className = "multi-dropdown global-column-dropdown";
+        dropdown.dataset.selectId = key;
+        const trigger = document.createElement("button");
+        trigger.type = "button";
+        trigger.className = "multi-dropdown-trigger";
+        trigger.setAttribute("aria-expanded", "false");
+        const triggerLabel = document.createElement("span");
+        triggerLabel.className = "multi-dropdown-label";
+        triggerLabel.textContent = placeholder;
+        trigger.appendChild(triggerLabel);
+        const icon = document.createElement("i");
+        icon.className = "fa-solid fa-chevron-down";
+        trigger.appendChild(icon);
+        const menu = document.createElement("div");
+        menu.className = "multi-dropdown-menu global-column-menu";
+        menu.hidden = true;
+        const select = document.createElement("select");
+        select.dataset.role = key;
+        select.multiple = true;
+        select.hidden = true;
+        allColumns.forEach(column => {
+            const option = document.createElement("option");
+            option.value = column;
+            option.textContent = column;
+            option.selected = pattern.test(column);
+            select.appendChild(option);
+            const item = document.createElement("label");
+            item.className = "global-column-option";
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = option.selected;
+            checkbox.addEventListener("change", () => {
+                option.selected = checkbox.checked;
+                updateLabel();
+            });
+            const text = document.createElement("span");
+            text.textContent = column;
+            item.append(checkbox, text);
+            menu.appendChild(item);
+        });
+        const updateLabel = () => {
+            const chosen = Array.from(select.selectedOptions).map(option => option.value);
+            triggerLabel.textContent = chosen.length ? `เลือกแล้ว ${chosen.length} รายการ` : placeholder;
+        };
+        trigger.addEventListener("click", () => {
+            const opening = menu.hidden;
+            document.querySelectorAll(".global-column-menu").forEach(other => { other.hidden = true; other.previousElementSibling?.setAttribute("aria-expanded", "false"); });
+            menu.hidden = !opening;
+            trigger.setAttribute("aria-expanded", String(opening));
+        });
+        dropdown.append(trigger, menu, select);
+        label.appendChild(dropdown);
+        mappingFields.appendChild(label);
+        updateLabel();
+    };
+    addSelect("revenue_columns", "คอลัมน์รายรับ", /revenue|sales|income|รายรับ|ยอดขาย|รายได้/i, "เลือกคอลัมน์รายรับ");
+    addSelect("expense_columns", "คอลัมน์รายจ่าย", /expense|cost|spend|รายจ่าย|ต้นทุน|ค่าใช้จ่าย/i, "เลือกคอลัมน์รายจ่าย");
+    card.appendChild(mappingFields);
+    const dates = document.createElement("p"); dates.className = "mapping-hint";
+    dates.textContent = "วันที่ที่ตรวจพบ: " + detectedFileSchemas.map(schema => {
+        const match = schema.columns.find(col => /date|วันที่|period|time|day/i.test(col));
+        return `${schema.filename} → ${match || "ไม่พบอัตโนมัติ"}`;
+    }).join(" · ");
+    card.appendChild(dates); container.appendChild(card);
+    mappingPanel.hidden = false;
+}
+
+function updateMultiDropdownLabel(select, label) {
+    const selected = Array.from(select.selectedOptions).map((option) => option.textContent);
+    const dropdown = label.closest(".multi-dropdown");
+    if (dropdown?.dataset.singleSelect === "true") {
+        label.textContent = selected.length ? selected[0] : "เลือกคอลัมน์วันที่";
+        return;
+    }
+    label.textContent = selected.length
+        ? `เลือกแล้ว ${selected.length} รายการ: ${selected.join(", ")}`
+        : "คลิกเพื่อเลือกได้หลายรายการ";
+}
+
+document.addEventListener("click", (event) => {
+    document.querySelectorAll(".multi-dropdown.open").forEach((dropdown) => {
+        if (!dropdown.contains(event.target)) {
+            dropdown.classList.remove("open");
+            dropdown.querySelector(".multi-dropdown-menu").hidden = true;
+            dropdown.querySelector(".multi-dropdown-trigger").setAttribute("aria-expanded", "false");
+        }
+    });
+});
+
+
+
+/* =========================================
+   CHOOSE FILE
+========================================= */
+
+browseBtn.addEventListener(
+    "click",
+    () => {
+
+        fileInput.click();
+
+    }
+);
+
+
+
+/* =========================================
+   FILE CHANGE
+========================================= */
+
+fileInput.addEventListener(
+    "change",
+    async () => {
+
+        if (
+            fileInput.files &&
+            fileInput.files.length > 0
+        ) {
+
+            const file = fileInput.files[0];
+            updateSelectedFiles(fileInput.files);
+
+
+            analyzeBtn.disabled =
+                false;
+
+
+            status.textContent = "";
+            try {
+                await prepareColumnMapping(fileInput.files);
+            } catch (error) {
+                status.textContent = error.message;
+                analyzeBtn.disabled = true;
+            }
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   DRAG OVER
+========================================= */
+
+dropArea.addEventListener(
+    "dragover",
+    (event) => {
+
+        event.preventDefault();
+
+        dropArea.classList.add(
+            "drag-over"
+        );
+
+    }
+);
+
+
+
+/* =========================================
+   DRAG LEAVE
+========================================= */
+
+dropArea.addEventListener(
+    "dragleave",
+    () => {
+
+        dropArea.classList.remove(
+            "drag-over"
+        );
+
+    }
+);
+
+
+
+/* =========================================
+   DROP
+========================================= */
+
+dropArea.addEventListener(
+    "drop",
+    (event) => {
+
+        event.preventDefault();
+
+        dropArea.classList.remove(
+            "drag-over"
+        );
+
+
+        const files =
+            event.dataTransfer.files;
+
+
+        if (!files.length) {
+            return;
+        }
+
+
+        updateSelectedFiles(files);
+        const file = files[0];
+
+
+        if (
+            !file.name
+                .toLowerCase()
+                .endsWith(".csv")
+        ) {
+
+            status.textContent =
+                "รองรับเฉพาะไฟล์ CSV";
+
+            return;
+
+        }
+
+
+        fileInput.files =
+            files;
+
+
+        fileName.textContent =
+            file.name;
+
+
+        analyzeBtn.disabled =
+            false;
+
+
+        status.textContent = "";
+        prepareColumnMapping(fileInput.files).catch((error) => {
+            status.textContent = error.message;
+            analyzeBtn.disabled = true;
+        });
+
+    }
+);
+
+
+
+/* =========================================
+   UPLOAD + ANALYZE
+========================================= */
+
+analyzeBtn.addEventListener(
+    "click",
+    async () => {
+
+        const files = Array.from(fileInput.files || []);
+        const initialCash = Number(document.getElementById("initialCash").value);
+        if (!files.length) { status.textContent = "กรุณาเลือกไฟล์ CSV"; return; }
+        if (files.some(file => !file.name.toLowerCase().endsWith(".csv"))) { status.textContent = "รองรับเฉพาะไฟล์ CSV"; return; }
+        if (!Number.isFinite(initialCash) || initialCash < 0) { status.textContent = "กรุณากรอก Initial Cash ให้ถูกต้อง"; return; }
+        if (detectedFileSchemas.length !== files.length) { status.textContent = "กรุณารอให้ระบบอ่านคอลัมน์ของทุกไฟล์เสร็จก่อน"; return; }
+        const globalCard = document.querySelector("#mappingSources .global-mapping-card");
+        const selectedRevenue = Array.from(globalCard.querySelector('[data-role="revenue_columns"]').selectedOptions).map(o => o.value);
+        const selectedExpense = Array.from(globalCard.querySelector('[data-role="expense_columns"]').selectedOptions).map(o => o.value);
+        if (!selectedRevenue.length && !selectedExpense.length) { status.textContent = "กรุณาเลือกคอลัมน์รายรับหรือรายจ่ายอย่างน้อยหนึ่งรายการ"; return; }
+        const mappings = detectedFileSchemas.map((schema, index) => {
+            const dateColumn = schema.columns.find(col => /date|วันที่|period|time|day/i.test(col));
+            return { filename: "", date_column: dateColumn,
+                revenue_columns: selectedRevenue.filter(col => schema.columns.includes(col)),
+                expense_columns: selectedExpense.filter(col => schema.columns.includes(col)),
+                profit_column: "__calculated__" };
+        });
+        const missingDate = mappings.find((mapping, index) => !mapping.date_column);
+        if (missingDate) { status.textContent = `ระบบไม่พบคอลัมน์วันที่ในไฟล์ ${detectedFileSchemas[mappings.indexOf(missingDate)].filename} กรุณาใช้หัวคอลัมน์ที่มีคำว่า date, day หรือ วันที่`; return; }
+        analyzeBtn.disabled = true;
+        status.textContent = "กำลังอัปโหลดไฟล์ทั้งหมด...";
+        try {
+            const formData = new FormData();
+            files.forEach(file => formData.append("files", file));
+            const uploadResponse = await fetch(`${API_URL}/upload-multiple`, {
+                method: "POST", headers: { "Authorization": `Bearer ${token}` }, body: formData
+            });
+            const uploadResult = await uploadResponse.json().catch(() => ({}));
+            if (!uploadResponse.ok) throw new Error(typeof uploadResult.detail === "string" ? uploadResult.detail : JSON.stringify(uploadResult.detail || "Upload failed"));
+            if (!Array.isArray(uploadResult.files) || uploadResult.files.length !== mappings.length) throw new Error("Backend ส่งข้อมูลไฟล์กลับมาไม่ครบ");
+            mappings.forEach((mapping, index) => { mapping.filename = uploadResult.files[index].filename; });
+            localStorage.setItem("uploaded_filename", uploadResult.files[0].filename);
+            status.textContent = "อัปโหลดครบแล้ว กำลังรวมข้อมูลและวิเคราะห์...";
+            const analyzeResponse = await fetch(`${API_URL}/analyze`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                body: JSON.stringify({ initial_cash: initialCash, files: mappings.map(({original_file, ...mapping}) => mapping) })
+            });
+            const analysisResult = await analyzeResponse.json().catch(() => ({}));
+            if (!analyzeResponse.ok) throw new Error(typeof analysisResult.detail === "string" ? analysisResult.detail : JSON.stringify(analysisResult.detail || "Analysis failed"));
+
+            /* =================================
+               SAVE RESULT
+            ================================= */
+
+            localStorage.setItem(
+                "analysis_result",
+                JSON.stringify(
+                    analysisResult
+                )
+            );
+
+
+            localStorage.setItem(
+                "initial_cash",
+                String(initialCash)
+            );
+
+
+            /* =================================
+               SUCCESS
+            ================================= */
+
+            status.textContent =
+                "วิเคราะห์สำเร็จ กำลังเปิด Dashboard...";
+
+
+            setTimeout(
+                () => {
+
+                    window.location.href =
+                        "dashboard.html";
+
+                },
+                500
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "UPLOAD / ANALYZE ERROR:",
+                error
+            );
+
+
+            if (
+                error.message
+                    .toLowerCase()
+                    .includes("failed to fetch")
+            ) {
+
+                status.textContent =
+                    "ไม่สามารถเชื่อมต่อ Backend ได้";
+
+            } else {
+
+                status.textContent =
+                    error.message;
+
+            }
+
+
+            analyzeBtn.disabled =
+                false;
+
+        }
+
+    }
+);
+
+
+
+/* =========================================
+   LOGOUT
+========================================= */
+
+document
+    .getElementById("logoutLink")
+    .addEventListener(
+        "click",
+        async (event) => {
+
+            event.preventDefault();
+
+
+            try {
+
+                await fetch(
+                    `${API_URL}/logout`,
+                    {
+
+                        method: "POST",
+
+                        headers: {
+
+                            "Authorization":
+                                `Bearer ${token}`
+
+                        }
+
+                    }
+                );
+
+            } catch (_) {
+
+                // ไม่ต้องหยุด logout
+
+            }
+
+
+            localStorage.removeItem(
+                "access_token"
+            );
+
+            localStorage.removeItem(
+                "user"
+            );
+
+            localStorage.removeItem(
+                "uploaded_filename"
+            );
+
+            localStorage.removeItem(
+                "analysis_result"
+            );
+
+            localStorage.removeItem(
+                "initial_cash"
+            );
+
+
+            window.location.href =
+                "login.html";
+
+        }
+    );
+
+</script>
+
+</body>
+</html>

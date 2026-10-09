@@ -1,0 +1,425 @@
+/* =====================================
+   Business Health Page
+===================================== */
+
+.health-grid{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:25px;
+
+}
+
+/* =========================
+   Score Card
+========================= */
+
+.score-card{
+
+    text-align:center;
+
+}
+
+.score-card h3{
+
+    font-size:24px;
+
+    margin-bottom:30px;
+
+}
+
+.score-circle{
+
+    width:240px;
+
+    height:240px;
+
+    margin:auto;
+
+    border-radius:50%;
+
+    background:conic-gradient(
+        #06b6d4 0deg,
+        #2563eb 313deg,
+        #1e293b 313deg
+    );
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+}
+
+.score-circle::before{
+
+    content:"";
+
+    width:185px;
+
+    height:185px;
+
+    background:#0f172a;
+
+    border-radius:50%;
+
+    position:absolute;
+
+}
+
+.score-value{
+
+    position:relative;
+
+    font-size:58px;
+
+    font-weight:bold;
+
+    z-index:2;
+
+}
+
+.score-value span{
+
+    font-size:22px;
+
+    color:#94a3b8;
+
+}
+
+.health-status{
+
+    margin-top:30px;
+
+    color:#22c55e;
+
+    font-size:20px;
+
+    font-weight:600;
+
+}
+
+.score-description{
+
+    margin-top:25px;
+
+    color:#94a3b8;
+
+    line-height:1.8;
+
+}
+
+/* =========================
+   AI Summary
+========================= */
+
+.ai-card h3{
+
+    font-size:24px;
+
+    margin-bottom:25px;
+
+}
+
+.ai-card ul{
+
+    list-style:none;
+
+}
+
+.ai-card li{
+
+    padding:18px;
+
+    border-radius:14px;
+
+    margin-bottom:15px;
+
+    background:rgba(255,255,255,.04);
+
+    transition:.3s;
+
+}
+
+.ai-card li:hover{
+
+    background:rgba(6,182,212,.12);
+
+    transform:translateX(8px);
+
+}
+
+/* =========================
+   KPI
+========================= */
+
+.glass p{
+
+    color:#94a3b8;
+
+}
+
+.glass h2{
+
+    margin-top:18px;
+
+    font-size:34px;
+
+}
+
+.positive{
+
+    color:#22c55e;
+
+}
+
+.negative{
+
+    color:#ef4444;
+
+}
+
+.warning{
+
+    color:#facc15;
+
+}
+
+/* =========================
+   Chart
+========================= */
+
+.chart-box{
+
+    margin-top:35px;
+
+}
+
+.chart-title{
+
+    margin-bottom:25px;
+
+    font-size:22px;
+
+    font-weight:600;
+
+}
+
+.chart-placeholder{
+
+    height:350px;
+
+    border-radius:20px;
+
+    background:linear-gradient(
+        135deg,
+        rgba(6,182,212,.08),
+        rgba(37,99,235,.08)
+    );
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    color:#94a3b8;
+
+}
+
+/* =========================
+   Risk Card
+========================= */
+
+.risk-card{
+
+    margin-top:30px;
+
+}
+
+.risk-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:18px;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    background:rgba(255,255,255,.03);
+
+}
+
+.risk-low{
+
+    color:#22c55e;
+
+}
+
+.risk-medium{
+
+    color:#facc15;
+
+}
+
+.risk-high{
+
+    color:#ef4444;
+
+}
+
+/* =========================
+   Recommendation
+========================= */
+
+.recommendation{
+
+    margin-top:30px;
+
+}
+
+.recommend-item{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    margin-bottom:18px;
+
+    background:rgba(6,182,212,.06);
+
+    transition:.3s;
+
+}
+
+.recommend-item:hover{
+
+    transform:translateX(8px);
+
+}
+
+.priority{
+
+    padding:8px 18px;
+
+    border-radius:30px;
+
+    font-size:14px;
+
+    background:#14532d;
+
+    color:#4ade80;
+
+}
+
+/* =========================
+   Buttons
+========================= */
+
+.export-btn{
+
+    margin-top:35px;
+
+    border:none;
+
+    cursor:pointer;
+
+    padding:15px 35px;
+
+    border-radius:14px;
+
+    background:linear-gradient(
+        135deg,
+        #06b6d4,
+        #2563eb
+    );
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:600;
+
+    transition:.3s;
+
+}
+
+.export-btn:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:0 12px 25px rgba(37,99,235,.35);
+
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media(max-width:992px){
+
+.health-grid{
+
+    grid-template-columns:1fr;
+
+}
+
+}
+
+@media(max-width:768px){
+
+.score-circle{
+
+    width:180px;
+
+    height:180px;
+
+}
+
+.score-circle::before{
+
+    width:140px;
+
+    height:140px;
+
+}
+
+.score-value{
+
+    font-size:42px;
+
+}
+
+.recommend-item{
+
+    flex-direction:column;
+
+    gap:15px;
+
+    align-items:flex-start;
+
+}
+
+.risk-item{
+
+    flex-direction:column;
+
+    align-items:flex-start;
+
+    gap:10px;
+
+}
+
+}

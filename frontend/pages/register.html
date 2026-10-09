@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>BusinessPilot AI | Register</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #020617;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            width: 650px;
+            height: 650px;
+            background: radial-gradient(circle, #06b6d455, transparent);
+            top: -250px;
+            left: -250px;
+            pointer-events: none;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            width: 650px;
+            height: 650px;
+            background: radial-gradient(circle, #2563eb44, transparent);
+            bottom: -250px;
+            right: -250px;
+            pointer-events: none;
+        }
+
+        .glass {
+            background: rgba(255, 255, 255, .05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, .08);
+        }
+
+        .btn {
+            background: linear-gradient(90deg, #06b6d4, #2563eb);
+            transition: .35s;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(6, 182, 212, .35);
+        }
+
+        .btn:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        input {
+            background: #0f172a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="min-h-screen flex items-center justify-center p-8">
+
+        <div class="glass rounded-3xl w-full max-w-xl p-10">
+
+            <!-- LOGO -->
+            <div class="text-center">
+
+                <div
+                    class="mx-auto w-20 h-20 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-600 flex items-center justify-center text-3xl font-bold">
+                    AI
+                </div>
+
+                <h1 class="text-3xl font-bold mt-6">
+                    Create Account
+                </h1>
+
+                <p class="text-gray-400 mt-2">
+                    Start analyzing your business with AI
+                </p>
+
+            </div>
+
+
+            <!-- REGISTER FORM -->
+            <form id="registerForm" class="mt-10">
+
+                <!-- Username -->
+                <div>
+
+                    <label class="text-sm">
+                        Username
+                    </label>
+
+                    <div class="relative mt-2">
+
+                        <i
+                            class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                        </i>
+
+                        <input
+                            id="username"
+                            type="text"
+                            autocomplete="username"
+                            placeholder="testuser01"
+                            required
+                            class="w-full rounded-xl py-4 pl-12 border border-slate-700 focus:border-cyan-400 outline-none">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Email -->
+                <div class="mt-6">
+
+                    <label class="text-sm">
+                        Email
+                    </label>
+
+                    <div class="relative mt-2">
+
+                        <i
+                            class="fa-solid fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                        </i>
+
+                        <input
+                            id="email"
+                            type="email"
+                            autocomplete="email"
+                            placeholder="john@email.com"
+                            required
+                            class="w-full rounded-xl py-4 pl-12 border border-slate-700 focus:border-cyan-400 outline-none">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Company Name -->
+                <div class="mt-6">
+
+                    <label class="text-sm">
+                        Company Name
+                    </label>
+
+                    <div class="relative mt-2">
+
+                        <i
+                            class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                        </i>
+
+                        <input
+                            id="companyName"
+                            type="text"
+                            placeholder="ABC Company"
+                            class="w-full rounded-xl py-4 pl-12 border border-slate-700 focus:border-cyan-400 outline-none">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Password -->
+                <div class="mt-6">
+
+                    <label class="text-sm">
+                        Password
+                    </label>
+
+                    <div class="relative mt-2">
+
+                        <i
+                            class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                        </i>
+
+                        <input
+                            id="password"
+                            type="password"
+                            autocomplete="new-password"
+                            placeholder="********"
+                            required
+                            class="w-full rounded-xl py-4 pl-12 pr-12 border border-slate-700 focus:border-cyan-400 outline-none">
+
+                        <button
+                            type="button"
+                            id="togglePassword"
+                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+
+                    <!-- Password Strength -->
+                    <div class="mt-3">
+
+                        <div class="w-full h-2 rounded-full bg-slate-800">
+
+                            <div
+                                id="strengthBar"
+                                class="h-2 rounded-full bg-red-500 w-1/4">
+                            </div>
+
+                        </div>
+
+                        <p
+                            id="strengthText"
+                            class="text-red-400 text-sm mt-2">
+                            Weak Password
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Confirm Password -->
+                <div class="mt-6">
+
+                    <label class="text-sm">
+                        Confirm Password
+                    </label>
+
+                    <div class="relative mt-2">
+
+                        <i
+                            class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-gray-500">
+                        </i>
+
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            autocomplete="new-password"
+                            placeholder="********"
+                            required
+                            class="w-full rounded-xl py-4 pl-12 pr-4 border border-slate-700 focus:border-cyan-400 outline-none">
+
+                    </div>
+
+                </div>
+
+
+                <!-- Business Size -->
+                <div class="mt-6">
+
+                    <label class="text-sm">
+                        Business Size
+                    </label>
+
+                    <select
+                        id="businessSize"
+                        class="w-full mt-2 rounded-xl py-4 px-4 bg-slate-900 border border-slate-700 focus:border-cyan-400 outline-none">
+
+                        <option>Startup (1-10 Employees)</option>
+                        <option>Small Business (11-50)</option>
+                        <option>Medium Business (51-250)</option>
+                        <option>Enterprise (250+)</option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Terms -->
+                <div class="flex items-start gap-3 mt-8">
+
+                    <input
+                        id="terms"
+                        type="checkbox"
+                        required
+                        class="accent-cyan-500 mt-1">
+
+                    <p class="text-gray-400 text-sm leading-6">
+
+                        I agree to the
+
+                        <a href="#" class="text-cyan-400">
+                            Terms of Service
+                        </a>
+
+                        and
+
+                        <a href="#" class="text-cyan-400">
+                            Privacy Policy
+                        </a>
+
+                    </p>
+
+                </div>
+
+
+                <!-- Register Button -->
+                <button
+                    id="registerButton"
+                    type="submit"
+                    class="btn w-full py-4 rounded-xl mt-8 font-semibold text-lg">
+
+                    <i class="fa-solid fa-user-plus mr-2"></i>
+
+                    Create Account
+
+                </button>
+
+
+                <!-- Status -->
+                <p
+                    id="registerStatus"
+                    class="text-center text-sm mt-4 text-gray-400">
+                </p>
+
+
+                <!-- Divider -->
+                <div class="flex items-center gap-4 my-8">
+
+                    <div class="flex-1 h-px bg-slate-700"></div>
+
+                    <span class="text-gray-500 text-sm">
+                        OR
+                    </span>
+
+                    <div class="flex-1 h-px bg-slate-700"></div>
+
+                </div>
+
+
+                <!-- Google -->
+                <button
+                    type="button"
+                    class="w-full border border-slate-700 rounded-xl py-4 hover:bg-slate-800 transition">
+
+                    <i class="fa-brands fa-google mr-2"></i>
+
+                    Sign up with Google
+
+                </button>
+
+
+                <!-- Login -->
+                <p class="text-center text-gray-400 mt-8">
+
+                    Already have an account?
+
+                    <a
+                        href="login.html"
+                        class="text-cyan-400 font-semibold">
+
+                        Sign In
+
+                    </a>
+
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <script>
+
+        /* =========================================
+           BUSINESSPILOT API
+        ========================================= */
+
+        const IS_LOCAL_FRONTEND = window.location.protocol === "file:" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        const API_URL = window.BUSINESSPILOT_API_URL || (IS_LOCAL_FRONTEND ? "http://localhost:8000" : "https://businesspilot-ai-backend.onrender.com");
+
+
+        /* =========================================
+           ELEMENTS
+        ========================================= */
+
+        const form =
+            document.getElementById("registerForm");
+
+        const username =
+            document.getElementById("username");
+
+        const email =
+            document.getElementById("email");
+
+        const password =
+            document.getElementById("password");
+
+        const confirmPassword =
+            document.getElementById("confirmPassword");
+
+        const button =
+            document.getElementById("registerButton");
+
+        const status =
+            document.getElementById("registerStatus");
+
+
+        /* =========================================
+           PASSWORD SHOW / HIDE
+        ========================================= */
+
+        const togglePassword =
+            document.getElementById("togglePassword");
+
+        togglePassword.addEventListener("click", function () {
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+                togglePassword.innerHTML =
+                    '<i class="fa-solid fa-eye-slash"></i>';
+
+            } else {
+
+                password.type = "password";
+
+                togglePassword.innerHTML =
+                    '<i class="fa-solid fa-eye"></i>';
+
+            }
+
+        });
+
+
+        /* =========================================
+           PASSWORD STRENGTH
+        ========================================= */
+
+        const strengthBar =
+            document.getElementById("strengthBar");
+
+        const strengthText =
+            document.getElementById("strengthText");
+
+
+        password.addEventListener("input", function () {
+
+            const length =
+                password.value.length;
+
+
+            if (length < 6) {
+
+                strengthBar.className =
+                    "h-2 rounded-full bg-red-500 w-1/4";
+
+                strengthText.textContent =
+                    "Weak Password";
+
+                strengthText.className =
+                    "text-red-400 text-sm mt-2";
+
+            }
+
+            else if (length < 10) {
+
+                strengthBar.className =
+                    "h-2 rounded-full bg-yellow-500 w-2/4";
+
+                strengthText.textContent =
+                    "Medium Password";
+
+                strengthText.className =
+                    "text-yellow-400 text-sm mt-2";
+
+            }
+
+            else {
+
+                strengthBar.className =
+                    "h-2 rounded-full bg-green-500 w-full";
+
+                strengthText.textContent =
+                    "Strong Password";
+
+                strengthText.className =
+                    "text-green-400 text-sm mt-2";
+
+            }
+
+        });
+
+
+        /* =========================================
+           REGISTER
+        ========================================= */
+
+        form.addEventListener("submit", async function (event) {
+
+            event.preventDefault();
+
+
+            const usernameValue =
+                username.value.trim();
+
+            const emailValue =
+                email.value.trim();
+
+            const passwordValue =
+                password.value;
+
+            const confirmValue =
+                confirmPassword.value;
+
+
+            /* Check username */
+
+            if (!usernameValue) {
+
+                status.textContent =
+                    "กรุณากรอก Username";
+
+                status.className =
+                    "text-center text-sm mt-4 text-red-400";
+
+                return;
+
+            }
+
+
+            /* Check email */
+
+            if (!emailValue) {
+
+                status.textContent =
+                    "กรุณากรอก Email";
+
+                status.className =
+                    "text-center text-sm mt-4 text-red-400";
+
+                return;
+
+            }
+
+
+            /* Check password */
+
+            if (passwordValue.length < 6) {
+
+                status.textContent =
+                    "Password ต้องมีอย่างน้อย 6 ตัวอักษร";
+
+                status.className =
+                    "text-center text-sm mt-4 text-red-400";
+
+                return;
+
+            }
+
+
+            /* Check confirm password */
+
+            if (passwordValue !== confirmValue) {
+
+                status.textContent =
+                    "Password และ Confirm Password ไม่ตรงกัน";
+
+                status.className =
+                    "text-center text-sm mt-4 text-red-400";
+
+                return;
+
+            }
+
+
+            /* Disable button */
+
+            button.disabled = true;
+
+            button.innerHTML =
+                '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Creating Account...';
+
+            status.textContent =
+                "กำลังสร้างบัญชี...";
+
+            status.className =
+                "text-center text-sm mt-4 text-cyan-400";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/register`,
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                username:
+                                    usernameValue,
+
+                                email:
+                                    emailValue,
+
+                                password:
+                                    passwordValue
+
+                            })
+                        }
+                    );
+
+
+                let result = {};
+
+                try {
+
+                    result =
+                        await response.json();
+
+                } catch (error) {
+
+                    result = {};
+
+                }
+
+
+                /* Backend error */
+
+                if (!response.ok) {
+
+                    let message =
+                        "ไม่สามารถสร้างบัญชีได้";
+
+
+                    if (typeof result.detail === "string") {
+
+                        message =
+                            result.detail;
+
+                    }
+
+                    else if (
+                        Array.isArray(result.detail)
+                    ) {
+
+                        message =
+                            result.detail
+                                .map(item =>
+                                    item.msg || ""
+                                )
+                                .join(", ");
+
+                    }
+
+
+                    throw new Error(message);
+
+                }
+
+
+                /* SUCCESS */
+
+                status.textContent =
+                    "สร้างบัญชีสำเร็จ! กำลังไปหน้า Login...";
+
+                status.className =
+                    "text-center text-sm mt-4 text-green-400";
+
+
+                /* Save API URL */
+
+                localStorage.setItem(
+                    "api_url",
+                    API_URL
+                );
+
+
+                /* Go login */
+
+                setTimeout(function () {
+
+                    window.location.href =
+                        "login.html";
+
+                }, 1000);
+
+
+            } catch (error) {
+
+                console.error(
+                    "REGISTER ERROR:",
+                    error
+                );
+
+
+                status.textContent =
+                    error.message ||
+                    "ไม่สามารถเชื่อมต่อ Backend ได้";
+
+                status.className =
+                    "text-center text-sm mt-4 text-red-400";
+
+
+                button.disabled = false;
+
+                button.innerHTML =
+                    '<i class="fa-solid fa-user-plus mr-2"></i> Create Account';
+
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

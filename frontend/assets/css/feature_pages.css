@@ -1,0 +1,23 @@
+/* Shared navigation matching the supplied BusinessPilot sidebar design */
+:root{color-scheme:dark;--bp-bg:#0f172a;--bp-text:#dbeafe;--bp-muted:#94a3b8;--bp-active:linear-gradient(110deg,#06b6d4,#2563eb);--bp-hover:#1e293b}
+body{margin:0;background:#0b1120;color:var(--bp-text);font-family:Poppins,Inter,system-ui,sans-serif}
+.app-shell{display:grid;grid-template-columns:264px minmax(0,1fr);min-height:100vh}
+.sidebar{position:fixed;inset:0 auto 0 0;width:264px;box-sizing:border-box;padding:21px 18px 18px;background:#0f172a;border-right:1px solid rgba(255,255,255,.06);display:flex;flex-direction:column;overflow-y:auto}
+.brand{display:flex;align-items:center;gap:12px;font-size:19px;font-weight:700;margin:2px 10px 26px;color:#f8fafc}.brand span{color:#22d3ee}
+.sidebar nav{display:flex;flex-direction:column;gap:8px}
+.nav-link{display:flex;align-items:center;gap:16px;min-height:54px;box-sizing:border-box;color:#dbeafe;text-decoration:none;padding:0 20px;border-radius:15px;margin:0;font-size:15px;font-weight:500;white-space:nowrap;transition:background .18s,color .18s}
+.nav-link i{width:20px;text-align:center;font-size:16px}.nav-link:hover{background:#1e293b;color:#fff}.nav-link.active{background:var(--bp-active);color:#fff}
+.sidebar .logout-link{margin-top:auto}
+body[data-page="forecast"] .sidebar a[href="forecast.html"],body[data-page="scenario"] .sidebar a[href="scenario.html"],body[data-page="recommendation"] .sidebar a[href="recommendation.html"],body[data-page="report"] .sidebar a[href="report.html"],body[data-page="notification"] .sidebar a[href="notification.html"],body[data-page="settings"] .sidebar a[href="settings.html"]{background:var(--bp-active);color:#fff}
+
+.main{grid-column:2;padding:clamp(22px,4vw,48px);max-width:1400px;width:100%;box-sizing:border-box}
+.eyebrow{color:#67e8f9;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700}
+.page-title{font-size:clamp(28px,4vw,40px);margin:8px 0}.muted{color:var(--bp-muted);line-height:1.6}
+.panel{background:#0f172a;border:1px solid #25334a;border-radius:18px;padding:22px;margin-top:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}
+.metric{background:#111e33;border:1px solid #263852;padding:20px;border-radius:14px}.metric small{display:block;color:#94a3b8;margin-bottom:10px}.metric strong{font-size:26px;overflow-wrap:anywhere}
+.btn{background:#0891b2;color:white;border:0;border-radius:9px;padding:11px 16px;cursor:pointer;font-weight:700}.btn.secondary{background:#1e293b}
+.field{display:grid;gap:7px;margin:12px 0}.field input,.field select{background:#020617;border:1px solid #334155;color:#e2e8f0;padding:11px;border-radius:9px;width:100%;box-sizing:border-box}
+.notice{padding:13px 15px;border-radius:10px;background:#13253b;border:1px solid #27445e;margin:10px 0}.notice.warn{border-color:#854d0e;background:#2b2111}.list{padding-left:20px;line-height:1.8}.footer{margin-top:30px;color:#64748b;font-size:12px}
+.app-shell{display:block;min-height:100vh}.main{display:block;min-width:0;margin-left:280px;padding:35px;box-sizing:border-box;width:auto;max-width:none;grid-column:auto}.sidebar{width:280px;height:100vh;padding:0;display:flex;flex-direction:column;position:fixed;inset:0 auto 0 0;background:#0f172a;border-right:1px solid rgba(255,255,255,.08)}.logo-area{display:flex;align-items:center;gap:15px;padding:30px}.logo{width:60px;height:60px;border-radius:18px}.menu{margin-top:30px;display:flex;flex-direction:column;gap:8px;padding:0 18px}.menu-item{display:flex;align-items:center;gap:15px;text-decoration:none;color:#cbd5e1;padding:15px 18px;border-radius:14px;white-space:nowrap}.menu-item i{width:24px;text-align:center}.logout{margin-top:auto;padding:25px}.page-title{font-size:34px;font-weight:700;margin:0 0 8px;color:#fff}.eyebrow{color:#22d3ee;text-transform:uppercase;letter-spacing:.12em;font-size:12px;font-weight:700;margin-bottom:12px}
+@media(max-width:760px){.app-shell{grid-template-columns:1fr}.sidebar{position:sticky;top:0;width:100%;height:auto;padding:12px;z-index:10;display:block;overflow-x:auto;border-right:0;border-bottom:1px solid #1e293b}.brand{display:none}.sidebar nav{flex-direction:row;gap:6px}.nav-link{min-height:44px;padding:0 13px}.sidebar .logout-link{margin-top:0}.main{grid-column:1;padding:20px}}

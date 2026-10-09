@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>BusinessPilot AI</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <style>
+        * {
+            font-family: "Poppins", sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: #020617;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .hero-bg {
+            background:
+                radial-gradient(circle at top left, rgba(6,182,212,.35), transparent 35%),
+                radial-gradient(circle at bottom right, rgba(59,130,246,.25), transparent 40%);
+        }
+
+        .glass {
+            background: rgba(255,255,255,.05);
+            backdrop-filter: blur(20px);
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        .gradient-text{
+            background:linear-gradient(90deg,#22d3ee,#3b82f6);
+            -webkit-background-clip:text;
+            -webkit-text-fill-color:transparent;
+        }
+
+        .btn-primary{
+            background:linear-gradient(90deg,#06b6d4,#2563eb);
+            transition:.35s;
+        }
+
+        .btn-primary:hover{
+            transform:translateY(-3px);
+            box-shadow:0 15px 35px rgba(6,182,212,.35);
+        }
+
+        .floating{
+            animation:float 4s ease-in-out infinite;
+        }
+
+        @keyframes float{
+            0%{transform:translateY(0);}
+            50%{transform:translateY(-10px);}
+            100%{transform:translateY(0);}
+        }
+    </style>
+
+</head>
+
+<body>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="fixed w-full top-0 z-50 glass">
+
+    <div class="max-w-7xl mx-auto flex justify-between items-center h-20 px-8">
+
+        <div class="flex items-center gap-3">
+
+            <div
+                class="w-11 h-11 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-600 flex justify-center items-center text-xl font-bold">
+
+                AI
+
+            </div>
+
+            <div>
+
+                <h1 class="font-bold text-xl">
+
+                    BusinessPilot AI
+
+                </h1>
+
+                <p class="text-xs text-gray-400">
+
+                    Startup Health Platform
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="hidden lg:flex gap-10 text-gray-300">
+
+            <a href="#features" class="hover:text-cyan-400 duration-300">
+                Features
+            </a>
+
+            <a href="#dashboard" class="hover:text-cyan-400 duration-300">
+                Dashboard
+            </a>
+
+            <a href="#pricing" class="hover:text-cyan-400 duration-300">
+                Pricing
+            </a>
+
+            <a href="#contact" class="hover:text-cyan-400 duration-300">
+                Contact
+            </a>
+
+        </div>
+
+        <div class="flex gap-4">
+
+            <a href="login.html"
+                class="border border-gray-700 px-5 py-2 rounded-xl hover:bg-slate-800">
+
+                Login
+
+            </a>
+
+            <a href="register.html"
+                class="btn-primary px-5 py-2 rounded-xl font-semibold">
+
+                Get Started
+
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+<!-- ================= HERO ================= -->
+
+<section class="hero-bg min-h-screen flex items-center">
+
+    <div class="max-w-7xl mx-auto px-8 grid lg:grid-cols-2 gap-20 items-center">
+
+        <!-- LEFT -->
+
+        <div>
+
+            <span
+                class="inline-flex items-center gap-2 px-5 py-2 rounded-full border border-cyan-500/40 bg-cyan-500/10 text-cyan-300">
+
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+
+                AI Business Analytics Platform
+
+            </span>
+
+            <h1 class="text-6xl lg:text-7xl font-extrabold mt-8 leading-tight">
+
+                Know Your
+
+                <span class="gradient-text">
+
+                    Business
+
+                </span>
+
+                <br>
+
+                Before It
+
+                <span class="gradient-text">
+
+                    Knows You
+
+                </span>
+
+            </h1>
+
+            <p class="text-gray-400 text-xl mt-8 leading-10">
+
+                วิเคราะห์สุขภาพธุรกิจด้วย AI
+
+                คาดการณ์กระแสเงินสดล่วงหน้า
+
+                จำลองผลลัพธ์ก่อนตัดสินใจ
+
+                พร้อมแนะนำแนวทางที่ช่วยให้ธุรกิจของคุณเติบโตอย่างมั่นใจ
+
+            </p>
+
+            <div class="flex flex-wrap gap-5 mt-10">
+
+                <a href="dashboard.html"
+                    class="btn-primary px-8 py-4 rounded-xl font-semibold">
+
+                    Start Free
+
+                </a>
+
+                <a href="#dashboard"
+                    class="glass px-8 py-4 rounded-xl hover:border-cyan-500 duration-300">
+
+                    Live Demo
+
+                </a>
+
+            </div>
+
+            <div class="grid grid-cols-3 gap-8 mt-14">
+
+                <div>
+
+                    <h2 class="text-4xl font-bold">
+
+                        95%
+
+                    </h2>
+
+                    <p class="text-gray-400 mt-2">
+
+                        Prediction Accuracy
+
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <h2 class="text-4xl font-bold">
+
+                        12K+
+
+                    </h2>
+
+                    <p class="text-gray-400 mt-2">
+
+                        Businesses
+
+                    </p>
+
+                </div>
+
+                <div>
+
+                    <h2 class="text-4xl font-bold">
+
+                        24/7
+
+                    </h2>
+
+                    <p class="text-gray-400 mt-2">
+
+                        AI Monitoring
+
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="floating">
+
+            <div class="glass rounded-3xl p-8 shadow-2xl">
+
+                <div class="flex justify-between items-center">
+
+                    <div>
+
+                        <h2 class="text-2xl font-bold">
+
+                            Business Health
+
+                        </h2>
+
+                        <p class="text-gray-400">
+
+                            AI Real-time Analysis
+
+                        </p>
+
+                    </div>
+
+                    <span
+                        class="bg-green-500/20 text-green-400 px-4 py-2 rounded-full">
+
+                        Healthy
+
+                    </span>
+
+                </div>
+
+                <div class="mt-10">
+
+                    <h1 class="text-7xl font-black text-cyan-400">
+
+                        87
+
+                    </h1>
+
+                    <p class="text-gray-400">
+
+                        Business Health Score
+
+                    </p>
+
+                </div>
+
+                <div class="mt-10 space-y-6">
+
+                    <div>
+
+                        <div class="flex justify-between mb-2">
+
+                            <span>Cash Flow</span>
+
+                            <span class="text-green-400">
+
+                                +12%
+
+                            </span>
+
+                        </div>
+
+                        <div class="w-full h-3 rounded-full bg-slate-800">
+
+                            <div
+                                class="h-3 rounded-full bg-green-500 w-4/5">
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="flex justify-between">
+
+                        <span>Revenue</span>
+
+                        <span class="text-cyan-400">
+
+                            ฿1.25M
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex justify-between">
+
+                        <span>Expense</span>
+
+                        <span class="text-red-400">
+
+                            ฿820K
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex justify-between">
+
+                        <span>Forecast</span>
+
+                        <span class="text-yellow-400">
+
+                            Stable
+
+                        </span>
+
+                    </div>
+
+                    <div class="flex justify-between">
+
+                        <span>AI Confidence</span>
+
+                        <span class="text-cyan-400">
+
+                            96%
+
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ======= Part 2 จะเริ่มต่อจากตรงนี้ ======= -->
+ <!-- ================= DASHBOARD PREVIEW ================= -->
+
+<section id="dashboard" class="py-24 bg-slate-900">
+
+    <div class="max-w-7xl mx-auto px-8">
+
+        <div class="text-center">
+
+            <h2 class="text-5xl font-bold">
+                Dashboard Preview
+            </h2>
+
+            <p class="text-gray-400 mt-5 text-lg">
+                ภาพรวมสุขภาพธุรกิจและข้อมูลสำคัญในหน้าเดียว
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-4 gap-6 mt-16">
+
+            <!-- Revenue -->
+            <div class="glass rounded-3xl p-6">
+
+                <div class="flex justify-between items-center">
+
+                    <h3 class="font-semibold text-lg">
+                        Revenue
+                    </h3>
+
+                    <i class="fa-solid fa-chart-line text-cyan-400 text-2xl"></i>
+
+                </div>
+
+                <h2 class="text-4xl font-bold mt-8">
+                    ฿1.25M
+                </h2>
+
+                <p class="text-green-400 mt-3">
+                    ▲ +18%
+                </p>
+
+            </div>
+
+            <!-- Expense -->
+            <div class="glass rounded-3xl p-6">
+
+                <div class="flex justify-between">
+
+                    <h3 class="font-semibold text-lg">
+                        Expense
+                    </h3>
+
+                    <i class="fa-solid fa-wallet text-red-400 text-2xl"></i>
+
+                </div>
+
+                <h2 class="text-4xl font-bold mt-8">
+                    ฿820K
+                </h2>
+
+                <p class="text-red-400 mt-3">
+                    ▼ -6%
+                </p>
+
+            </div>
+
+            <!-- Profit -->
+            <div class="glass rounded-3xl p-6">
+
+                <div class="flex justify-between">
+
+                    <h3 class="font-semibold text-lg">
+                        Profit
+                    </h3>
+
+                    <i class="fa-solid fa-coins text-yellow-400 text-2xl"></i>
+
+                </div>
+
+                <h2 class="text-4xl font-bold mt-8">
+                    ฿430K
+                </h2>
+
+                <p class="text-green-400 mt-3">
+                    Healthy
+                </p>
+
+            </div>
+
+            <!-- Cash -->
+            <div class="glass rounded-3xl p-6">
+
+                <div class="flex justify-between">
+
+                    <h3 class="font-semibold text-lg">
+                        Cash Runway
+                    </h3>
+
+                    <i class="fa-solid fa-clock text-cyan-400 text-2xl"></i>
+
+                </div>
+
+                <h2 class="text-4xl font-bold mt-8">
+                    6 Months
+                </h2>
+
+                <p class="text-yellow-400 mt-3">
+                    Medium Risk
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Mock Chart -->
+
+        <div class="glass rounded-3xl p-10 mt-10">
+
+            <div class="flex justify-between items-center">
+
+                <h3 class="text-2xl font-bold">
+                    Cash Flow Trend
+                </h3>
+
+                <span class="text-cyan-400">
+                    Last 6 Months
+                </span>
+
+            </div>
+
+            <div class="mt-10 h-72 flex items-end justify-between gap-4">
+
+                <div class="bg-cyan-500 rounded-t-xl w-full h-32"></div>
+                <div class="bg-cyan-500 rounded-t-xl w-full h-40"></div>
+                <div class="bg-cyan-500 rounded-t-xl w-full h-48"></div>
+                <div class="bg-cyan-500 rounded-t-xl w-full h-56"></div>
+                <div class="bg-cyan-500 rounded-t-xl w-full h-44"></div>
+                <div class="bg-cyan-500 rounded-t-xl w-full h-64"></div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= FEATURES ================= -->
+
+<section id="features" class="py-24">
+
+    <div class="max-w-7xl mx-auto px-8">
+
+        <div class="text-center">
+
+            <h2 class="text-5xl font-bold">
+                Powerful AI Features
+            </h2>
+
+            <p class="text-gray-400 mt-5">
+                ทุกเครื่องมือที่เจ้าของธุรกิจต้องใช้รวมอยู่ในแพลตฟอร์มเดียว
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-4 md:grid-cols-2 gap-8 mt-16">
+
+            <div class="glass rounded-3xl p-8 hover:border-cyan-500 transition">
+
+                <i class="fa-solid fa-heart-pulse text-5xl text-cyan-400"></i>
+
+                <h3 class="text-2xl font-bold mt-6">
+                    Business Health
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    วิเคราะห์สุขภาพธุรกิจจากรายรับ รายจ่าย และกระแสเงินสด
+                </p>
+
+            </div>
+
+            <div class="glass rounded-3xl p-8 hover:border-cyan-500 transition">
+
+                <i class="fa-solid fa-chart-simple text-5xl text-green-400"></i>
+
+                <h3 class="text-2xl font-bold mt-6">
+                    Forecast
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    คาดการณ์เงินสดล่วงหน้า 6 เดือนด้วย AI
+                </p>
+
+            </div>
+
+            <div class="glass rounded-3xl p-8 hover:border-cyan-500 transition">
+
+                <i class="fa-solid fa-sliders text-5xl text-yellow-400"></i>
+
+                <h3 class="text-2xl font-bold mt-6">
+                    Scenario
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    ทดลองลดค่าใช้จ่าย เพิ่มราคา หรือเปิดสาขาใหม่ก่อนตัดสินใจ
+                </p>
+
+            </div>
+
+            <div class="glass rounded-3xl p-8 hover:border-cyan-500 transition">
+
+                <i class="fa-solid fa-robot text-5xl text-purple-400"></i>
+
+                <h3 class="text-2xl font-bold mt-6">
+                    AI Advisor
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    รับคำแนะนำอัตโนมัติจาก AI พร้อมระดับความมั่นใจ
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ======= Part 3 จะต่อจากตรงนี้ ======= -->
+ <!-- ================= TESTIMONIALS ================= -->
+
+<section class="py-24 bg-slate-900">
+
+    <div class="max-w-7xl mx-auto px-8">
+
+        <div class="text-center">
+
+            <h2 class="text-5xl font-bold">
+                Trusted By Business Owners
+            </h2>
+
+            <p class="text-gray-400 mt-5">
+                เสียงตอบรับจากผู้ใช้งาน BusinessPilot AI
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-8 mt-16">
+
+            <div class="glass rounded-3xl p-8">
+
+                <p class="text-gray-300 leading-8">
+                    "BusinessPilot AI ช่วยให้ผมเห็นปัญหากระแสเงินสดก่อนเกิดขึ้นจริง
+                    และสามารถวางแผนรับมือได้ล่วงหน้า"
+                </p>
+
+                <div class="mt-6">
+                    <h4 class="font-bold">Somchai K.</h4>
+                    <p class="text-gray-500 text-sm">
+                        Restaurant Owner
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="glass rounded-3xl p-8">
+
+                <p class="text-gray-300 leading-8">
+                    "Scenario Simulator ช่วยให้ตัดสินใจเปิดสาขาใหม่ได้อย่างมั่นใจ
+                    เพราะเห็นผลลัพธ์ล่วงหน้า"
+                </p>
+
+                <div class="mt-6">
+                    <h4 class="font-bold">Anan P.</h4>
+                    <p class="text-gray-500 text-sm">
+                        Retail Business
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="glass rounded-3xl p-8">
+
+                <p class="text-gray-300 leading-8">
+                    "AI Advisor ให้คำแนะนำที่ใช้งานได้จริง
+                    เหมือนมีที่ปรึกษาธุรกิจส่วนตัว"
+                </p>
+
+                <div class="mt-6">
+                    <h4 class="font-bold">Nattaya S.</h4>
+                    <p class="text-gray-500 text-sm">
+                        Startup Founder
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= PRICING ================= -->
+
+<section id="pricing" class="py-24">
+
+    <div class="max-w-6xl mx-auto px-8">
+
+        <div class="text-center">
+
+            <h2 class="text-5xl font-bold">
+                Simple Pricing
+            </h2>
+
+            <p class="text-gray-400 mt-5">
+                เริ่มต้นใช้งานได้ฟรี
+            </p>
+
+        </div>
+
+        <div class="grid lg:grid-cols-2 gap-10 mt-16">
+
+            <div class="glass rounded-3xl p-10">
+
+                <h3 class="text-3xl font-bold">
+                    Starter
+                </h3>
+
+                <h1 class="text-6xl font-black mt-6">
+                    Free
+                </h1>
+
+                <ul class="space-y-4 mt-10 text-gray-300">
+
+                    <li>✓ Dashboard</li>
+                    <li>✓ Health Score</li>
+                    <li>✓ Basic Forecast</li>
+                    <li>✓ AI Recommendation</li>
+
+                </ul>
+
+            </div>
+
+            <div class="rounded-3xl p-10 bg-gradient-to-r from-cyan-500 to-blue-600">
+
+                <h3 class="text-3xl font-bold">
+                    Professional
+                </h3>
+
+                <h1 class="text-6xl font-black mt-6">
+                    ฿499
+                </h1>
+
+                <p class="mt-2">
+                    /month
+                </p>
+
+                <ul class="space-y-4 mt-10">
+
+                    <li>✓ Everything in Starter</li>
+                    <li>✓ Advanced Forecast</li>
+                    <li>✓ Scenario Simulator</li>
+                    <li>✓ Export Report</li>
+                    <li>✓ Priority Support</li>
+
+                </ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= CTA ================= -->
+
+<section class="py-24">
+
+    <div class="max-w-5xl mx-auto px-8">
+
+        <div class="rounded-3xl bg-gradient-to-r from-cyan-500 to-blue-600 p-16 text-center">
+
+            <h2 class="text-5xl font-bold">
+                Ready To Grow Your Business?
+            </h2>
+
+            <p class="mt-6 text-lg">
+                เริ่มวิเคราะห์ธุรกิจของคุณด้วย AI ได้วันนี้
+            </p>
+
+            <div class="mt-10">
+
+                <a href="register.html"
+                    class="bg-white text-black px-8 py-4 rounded-xl font-bold">
+
+                    Get Started Now
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- ================= FOOTER ================= -->
+
+<footer id="contact" class="border-t border-slate-800">
+
+    <div class="max-w-7xl mx-auto px-8 py-12">
+
+        <div class="grid lg:grid-cols-4 gap-10">
+
+            <div>
+
+                <h3 class="text-2xl font-bold">
+                    BusinessPilot AI
+                </h3>
+
+                <p class="text-gray-400 mt-4">
+                    AI-powered business analytics platform
+                </p>
+
+            </div>
+
+            <div>
+
+                <h4 class="font-semibold mb-4">
+                    Product
+                </h4>
+
+                <ul class="space-y-2 text-gray-400">
+
+                    <li>Dashboard</li>
+                    <li>Forecast</li>
+                    <li>Scenario</li>
+
+                </ul>
+
+            </div>
+
+            <div>
+
+                <h4 class="font-semibold mb-4">
+                    Company
+                </h4>
+
+                <ul class="space-y-2 text-gray-400">
+
+                    <li>About</li>
+                    <li>Contact</li>
+                    <li>Support</li>
+
+                </ul>
+
+            </div>
+
+            <div>
+
+                <h4 class="font-semibold mb-4">
+                    Follow Us
+                </h4>
+
+                <div class="flex gap-4 text-2xl">
+
+                    <i class="fab fa-facebook"></i>
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-linkedin"></i>
+                    <i class="fab fa-github"></i>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="border-t border-slate-800 mt-10 pt-6 text-center text-gray-500">
+
+            © 2026 BusinessPilot AI. All Rights Reserved.
+
+        </div>
+
+    </div>
+
+</footer>
+
+<!-- ================= SCRIPT ================= -->
+
+<script>
+
+window.addEventListener("scroll", () => {
+
+    const nav = document.querySelector("nav");
+
+    if(window.scrollY > 50){
+
+        nav.classList.add("shadow-2xl");
+
+    } else {
+
+        nav.classList.remove("shadow-2xl");
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

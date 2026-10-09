@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="../assets/css/dashboard.css">
+<title>BusinessPilot AI | Recommendations</title>
+<link rel="stylesheet" href="../assets/css/feature_pages.css">
+<link rel="stylesheet" href="../assets/css/dashboard.css">
+<script defer src="../assets/js/feature_pages.js"></script>
+</head>
+<body data-page="recommendation">
+<div class="app-shell">
+<aside class="sidebar">
+<div class="logo-area"><div class="logo">AI</div><div><h1>BusinessPilot</h1><p>AI Platform</p></div></div>
+<nav class="menu" aria-label="Main navigation">
+<a href="dashboard.html" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+<a href="upload_data.html" class="menu-item"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Data</span></a>
+<a href="business_health.html" class="menu-item"><i class="fa-solid fa-heart-pulse"></i><span>Business Health</span></a>
+<a href="forecast.html" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Forecast</span></a>
+<a href="scenario.html" class="menu-item"><i class="fa-solid fa-sliders"></i><span>Scenario</span></a>
+<a href="recommendation.html" class="menu-item"><i class="fa-solid fa-robot"></i><span>AI Recommendation</span></a>
+<a href="report.html" class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+<a href="notification.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+<a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+</nav>
+<div class="logout"><a href="login.html" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></div>
+</aside>
+<main class="main">
+<p class="eyebrow">BusinessPilot AI workspace</p>
+<h1 class="page-title">Recommendations</h1>
+<p class="muted">Action items based on your latest business analysis.</p>
+<div id="pageContent"></div>
+<p class="footer">Estimates are based on the latest analysis saved in this browser. Verify important financial decisions independently.</p>
+</main>
+</div>
+<script>
+document.getElementById("logoutLink").addEventListener("click", async function(event) {
+ event.preventDefault();
+ try { await fetch((window.BUSINESSPILOT_API_URL || localStorage.getItem("api_url") || "https://businesspilot-ai-backend.onrender.com") + "/logout", {method:"POST",headers:{"Authorization":"Bearer "+(localStorage.getItem("access_token")||"")} }); } catch (_) {}
+ ["access_token","user","uploaded_filename","analysis_result","initial_cash"].forEach(k=>localStorage.removeItem(k));
+ window.location.href="login.html";
+});
+</script>
+</body>
+</html>

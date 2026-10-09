@@ -1,0 +1,9 @@
+.git
+.serena
+__pycache__/
+*.py[cod]
+*.log
+.env
+.venv/
+venv/
+node_modules/
