@@ -861,6 +861,68 @@ class AnalyzeRequest(BaseModel):
     files: list[FileMapping] | None = None
 
 
+def generate_ai_recommendations(metrics: dict) -> list[str] | None:
+    """Request Thai business recommendations through OpenRouter; fall back to rules on failure."""
+    api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    model = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3-ultra-550b-a55b:free").strip()
+    if not api_key:
+        print("OpenRouter API key is not configured; using rule-based recommendations.")
+        return None
+
+    prompt = (
+        "คุณเป็นผู้ช่วยวิเคราะห์การเงินธุรกิจ SME ในประเทศไทย "
+        "วิเคราะห์เฉพาะตัวเลขที่ได้รับ ห้ามแต่งข้อมูลหรือรับประกันผลลัพธ์ "
+        "ให้คำแนะนำภาษาไทย 3-5 ข้อ เรียงตามผลกระทบและความเร่งด่วน "
+        "แต่ละข้อควรระบุสิ่งที่ต้องทำ เหตุผลจากตัวเลข และตัวชี้วัดที่ควรติดตาม "
+        "ห้ามสร้างตัวเลขเป้าหมายที่ไม่มีข้อมูลรองรับ ห้ามอ้างเหตุและผลเกินข้อมูล "
+        "หากข้อมูลไม่พอให้บอกว่าต้องเก็บข้อมูลอะไรเพิ่ม ตอบเป็น JSON เท่านั้นในรูปแบบ "
+        "{\"recommendations\":[\"คำแนะนำ\"]}\n"
+        f"ข้อมูลการเงิน: {json.dumps(metrics, ensure_ascii=False)}"
+    )
+    payload = json.dumps({
+        "model": model,
+        "messages": [
+            {"role": "system", "content": "ตอบภาษาไทย กระชับ อิงข้อมูลที่ให้มา และคืน JSON object ที่มี recommendations เป็น array ของ string เท่านั้น"},
+            {"role": "user", "content": prompt}
+        ],
+        "temperature": 0.2,
+        "max_tokens": 1200
+    }).encode("utf-8")
+    request = urllib.request.Request(
+        "https://openrouter.ai/api/v1/chat/completions",
+        data=payload,
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "http://localhost:8000",
+            "X-Title": "BusinessPilot AI"
+        },
+        method="POST"
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            result = json.loads(response.read().decode("utf-8"))
+        content = result["choices"][0]["message"]["content"]
+        if isinstance(content, list):
+            content = "".join(part.get("text", "") for part in content if isinstance(part, dict))
+        content = str(content).strip()
+        try:
+            generated = json.loads(content)
+        except ValueError:
+            start, end = content.find("{"), content.rfind("}")
+            if start < 0 or end <= start:
+                raise ValueError("Model did not return a JSON object")
+            generated = json.loads(content[start:end + 1])
+        recommendations = generated.get("recommendations", [])
+        if isinstance(recommendations, list):
+            cleaned = [str(item).strip() for item in recommendations if str(item).strip()]
+            return cleaned[:5] or None
+        raise ValueError("Invalid recommendations format")
+    except (urllib.error.URLError, TimeoutError, ValueError, KeyError, TypeError, IndexError) as exc:
+        print(f"OpenRouter recommendation unavailable; using rule-based fallback: {exc}")
+    return None
+
+
 @app.post("/analyze")
 def analyze_business(
     data: AnalyzeRequest,
@@ -1159,66 +1221,7 @@ def analyze_business(
 
         status = "Risk"
 
-def generate_ai_recommendations(metrics: dict) -> list[str] | None:
-    """Request Thai business recommendations through OpenRouter; fall back to rules on failure."""
-    api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
-    model = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3-ultra-550b-a55b:free").strip()
-    if not api_key:
-        print("OpenRouter API key is not configured; using rule-based recommendations.")
-        return None
 
-    prompt = (
-        "คุณเป็นผู้ช่วยวิเคราะห์การเงินธุรกิจ SME ในประเทศไทย "
-        "วิเคราะห์เฉพาะตัวเลขที่ได้รับ ห้ามแต่งข้อมูลหรือรับประกันผลลัพธ์ "
-        "ให้คำแนะนำภาษาไทย 3-5 ข้อ เรียงตามผลกระทบและความเร่งด่วน "
-        "แต่ละข้อควรระบุสิ่งที่ต้องทำ เหตุผลจากตัวเลข และตัวชี้วัดที่ควรติดตาม "
-        "ห้ามสร้างตัวเลขเป้าหมายที่ไม่มีข้อมูลรองรับ ห้ามอ้างเหตุและผลเกินข้อมูล "
-        "หากข้อมูลไม่พอให้บอกว่าต้องเก็บข้อมูลอะไรเพิ่ม ตอบเป็น JSON เท่านั้นในรูปแบบ "
-        "{\"recommendations\":[\"คำแนะนำ\"]}\n"
-        f"ข้อมูลการเงิน: {json.dumps(metrics, ensure_ascii=False)}"
-    )
-    payload = json.dumps({
-        "model": model,
-        "messages": [
-            {"role": "system", "content": "ตอบภาษาไทย กระชับ อิงข้อมูลที่ให้มา และคืน JSON object ที่มี recommendations เป็น array ของ string เท่านั้น"},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.2,
-        "max_tokens": 1200
-    }).encode("utf-8")
-    request = urllib.request.Request(
-        "https://openrouter.ai/api/v1/chat/completions",
-        data=payload,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:8000",
-            "X-Title": "BusinessPilot AI"
-        },
-        method="POST"
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=60) as response:
-            result = json.loads(response.read().decode("utf-8"))
-        content = result["choices"][0]["message"]["content"]
-        if isinstance(content, list):
-            content = "".join(part.get("text", "") for part in content if isinstance(part, dict))
-        content = str(content).strip()
-        try:
-            generated = json.loads(content)
-        except ValueError:
-            start, end = content.find("{"), content.rfind("}")
-            if start < 0 or end <= start:
-                raise ValueError("Model did not return a JSON object")
-            generated = json.loads(content[start:end + 1])
-        recommendations = generated.get("recommendations", [])
-        if isinstance(recommendations, list):
-            cleaned = [str(item).strip() for item in recommendations if str(item).strip()]
-            return cleaned[:5] or None
-        raise ValueError("Invalid recommendations format")
-    except (urllib.error.URLError, TimeoutError, ValueError, KeyError, TypeError, IndexError) as exc:
-        print(f"OpenRouter recommendation unavailable; using rule-based fallback: {exc}")
-    return None
 
 
     # ------------------------------------------
