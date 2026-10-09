@@ -114,7 +114,7 @@
 
 </style>
 
-<script src="../assets/js/api-config.js"></script>
+<script src="../assets/js/api-config.js?v=20261009-2"></script>
 </head>
 
 
@@ -975,20 +975,11 @@ analyzeBtn.addEventListener(
             );
 
 
-            if (
-                error.message
-                    .toLowerCase()
-                    .includes("failed to fetch")
-            ) {
-
-                status.textContent =
-                    "ไม่สามารถเชื่อมต่อ Backend ได้";
-
+            const errorText = String(error?.message || error || "Unknown error");
+            if (errorText.toLowerCase().includes("failed to fetch") || errorText.toLowerCase().includes("networkerror")) {
+                status.textContent = `เชื่อมต่อ Backend ไม่สำเร็จ (${API_URL}) กรุณารีเฟรชแบบ Ctrl+F5 แล้วลองใหม่ หากยังเกิดซ้ำให้เปิด F12 > Console/Network`;
             } else {
-
-                status.textContent =
-                    error.message;
-
+                status.textContent = `ทำรายการไม่สำเร็จ: ${errorText}`;
             }
 
 
