@@ -41,7 +41,12 @@ def _deliver_email_via_resend(recipient: str, subject: str, text_body: str, html
     request = urllib.request.Request(
         "https://api.resend.com/emails",
         data=payload,
-        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        headers={
+            "Authorization": f"Bearer {api_key}",
+            "Content-Type": "application/json",
+            "User-Agent": "BusinessPilotAI/1.0 (email-delivery)",
+            "Accept": "application/json",
+        },
         method="POST",
     )
     try:
