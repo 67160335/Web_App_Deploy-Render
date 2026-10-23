@@ -1885,8 +1885,9 @@ def send_executive_report_email(
     smtp_host = os.getenv("SMTP_HOST", "").strip()
     smtp_user = os.getenv("SMTP_USER", "").strip()
     smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
-    if not resend_key and not (smtp_host and smtp_user and smtp_password):
-        raise HTTPException(status_code=503, detail="ตั้งค่า RESEND_API_KEY และ RESEND_FROM หรือ SMTP_HOST, SMTP_USER, SMTP_PASSWORD ก่อน")
+    smtp_configured = bool(smtp_host and smtp_user and smtp_password)
+    if not smtp_configured and not resend_key:
+        raise HTTPException(status_code=503, detail="ตั้งค่า SMTP_HOST, SMTP_USER, SMTP_PASSWORD หรือ RESEND_API_KEY และ RESEND_FROM ก่อน")
 
     def money(value):
         return f"฿{value:,.0f}"
@@ -1939,9 +1940,7 @@ def send_executive_report_email(
     message["To"] = recipient
     message.set_content(plain)
     message.add_alternative(html_body, subtype="html")
-    if resend_key:
-        _deliver_email_via_resend(recipient, payload.subject[:180], plain, html_body)
-    else:
+    if smtp_configured:
         try:
             with smtplib.SMTP(smtp_host, int(os.getenv("SMTP_PORT", "587")), timeout=20) as server:
                 server.starttls()
@@ -1950,6 +1949,8 @@ def send_executive_report_email(
         except Exception as exc:
             print(f"Report email delivery failed: {type(exc).__name__}: {exc}")
             raise HTTPException(status_code=502, detail="ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า SMTP หรืออีเมลผู้รับ")
+    else:
+        _deliver_email_via_resend(recipient, payload.subject[:180], plain, html_body)
 
     return {"success": True, "recipient": recipient, "delivery_status": "sent", "message": "ส่งรายงานผู้บริหารสำเร็จแล้ว", "timestamp": datetime.now(timezone.utc).isoformat()}
 
@@ -2012,15 +2013,7 @@ def send_notification_email(
     email_sent = False
     delivery_note = ""
 
-    if resend_key:
-        text_body = "รายงานการแจ้งเตือนสุขภาพธุรกิจ\n" + "\n".join(
-            f"- {n.get('title') or n.get('head') or 'การแจ้งเตือน'}: {n.get('message') or n.get('body') or n.get('text') or ''}"
-            for n in payload.notifications
-        )
-        _deliver_email_via_resend(recipient, payload.subject, text_body, html_content)
-        email_sent = True
-        delivery_note = f"ผู้ให้บริการ Resend รับอีเมลแจ้งเตือนสำหรับ {recipient} แล้ว"
-    elif smtp_host and smtp_user and smtp_password:
+    if smtp_host and smtp_user and smtp_password:
         import smtplib
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
@@ -2041,8 +2034,16 @@ def send_notification_email(
         except Exception as exc:
             print(f"Notification email delivery failed: {type(exc).__name__}: {exc}")
             raise HTTPException(status_code=502, detail="ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า SMTP หรืออีเมลผู้รับ")
+    elif resend_key:
+        text_body = "รายงานการแจ้งเตือนสุขภาพธุรกิจ\n" + "\n".join(
+            f"- {n.get('title') or n.get('head') or 'การแจ้งเตือน'}: {n.get('message') or n.get('body') or n.get('text') or ''}"
+            for n in payload.notifications
+        )
+        _deliver_email_via_resend(recipient, payload.subject, text_body, html_content)
+        email_sent = True
+        delivery_note = f"ผู้ให้บริการ Resend รับอีเมลแจ้งเตือนสำหรับ {recipient} แล้ว"
     else:
-        raise HTTPException(status_code=503, detail="ตั้งค่า RESEND_API_KEY และ RESEND_FROM หรือ SMTP_HOST, SMTP_USER, SMTP_PASSWORD ก่อน")
+        raise HTTPException(status_code=503, detail="ตั้งค่า SMTP_HOST, SMTP_USER, SMTP_PASSWORD หรือ RESEND_API_KEY และ RESEND_FROM ก่อน")
 
     return {
         "success": True,
