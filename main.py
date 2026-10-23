@@ -23,6 +23,43 @@ from datetime import datetime, timedelta, timezone
 from dotenv import load_dotenv
 
 
+def _deliver_email_via_resend(recipient: str, subject: str, text_body: str, html_body: str) -> bool:
+    """Send through Resend's HTTPS API (SMTP egress may be blocked on cloud hosts)."""
+    api_key = os.getenv("RESEND_API_KEY", "").strip()
+    if not api_key:
+        return False
+    sender = os.getenv("RESEND_FROM", os.getenv("SMTP_FROM", "")).strip()
+    if not sender:
+        raise HTTPException(status_code=503, detail="ตั้งค่า RESEND_FROM เป็นอีเมล/โดเมนที่ยืนยันใน Resend ก่อน")
+    payload = json.dumps({
+        "from": sender,
+        "to": [recipient],
+        "subject": subject,
+        "text": text_body,
+        "html": html_body,
+    }).encode("utf-8")
+    request = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=payload,
+        headers={"Authorization": f"Bearer {api_key}", "Content-Type": "application/json"},
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(request, timeout=20) as response:
+            result = json.loads(response.read().decode("utf-8"))
+            if response.status not in (200, 201) or not result.get("id"):
+                raise RuntimeError("Resend did not confirm email acceptance")
+            print(f"Email accepted by Resend: id={result['id']}")
+            return True
+    except urllib.error.HTTPError as exc:
+        detail = exc.read().decode("utf-8", errors="replace")[:500]
+        print(f"Resend email delivery failed: HTTP {exc.code}: {detail}")
+        raise HTTPException(status_code=502, detail="ผู้ให้บริการอีเมลปฏิเสธคำขอ กรุณาตรวจสอบ RESEND_API_KEY และ RESEND_FROM")
+    except Exception as exc:
+        print(f"Resend email delivery failed: {type(exc).__name__}: {exc}")
+        raise HTTPException(status_code=502, detail="เชื่อมต่อบริการส่งอีเมลไม่สำเร็จ")
+
+
 # ==========================================
 # BusinessPilot AI API
 # ==========================================
@@ -1839,11 +1876,12 @@ def send_executive_report_email(
     if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", recipient):
         raise HTTPException(status_code=400, detail="กรุณาระบุอีเมลผู้รับให้ถูกต้อง")
 
+    resend_key = os.getenv("RESEND_API_KEY", "").strip()
     smtp_host = os.getenv("SMTP_HOST", "").strip()
     smtp_user = os.getenv("SMTP_USER", "").strip()
     smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
-    if not smtp_host or not smtp_user or not smtp_password:
-        raise HTTPException(status_code=503, detail="ยังไม่ได้ตั้งค่า SMTP จึงยังส่งอีเมลจริงไม่ได้ กรุณาตั้งค่า SMTP_HOST, SMTP_USER และ SMTP_PASSWORD")
+    if not resend_key and not (smtp_host and smtp_user and smtp_password):
+        raise HTTPException(status_code=503, detail="ตั้งค่า RESEND_API_KEY และ RESEND_FROM หรือ SMTP_HOST, SMTP_USER, SMTP_PASSWORD ก่อน")
 
     def money(value):
         return f"฿{value:,.0f}"
@@ -1896,14 +1934,17 @@ def send_executive_report_email(
     message["To"] = recipient
     message.set_content(plain)
     message.add_alternative(html_body, subtype="html")
-    try:
-        with smtplib.SMTP(smtp_host, int(os.getenv("SMTP_PORT", "587")), timeout=20) as server:
-            server.starttls()
-            server.login(smtp_user, smtp_password)
-            server.send_message(message)
-    except Exception as exc:
-        print(f"Report email delivery failed: {type(exc).__name__}: {exc}")
-        raise HTTPException(status_code=502, detail="ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า SMTP หรืออีเมลผู้รับ")
+    if resend_key:
+        _deliver_email_via_resend(recipient, payload.subject[:180], plain, html_body)
+    else:
+        try:
+            with smtplib.SMTP(smtp_host, int(os.getenv("SMTP_PORT", "587")), timeout=20) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_password)
+                server.send_message(message)
+        except Exception as exc:
+            print(f"Report email delivery failed: {type(exc).__name__}: {exc}")
+            raise HTTPException(status_code=502, detail="ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า SMTP หรืออีเมลผู้รับ")
 
     return {"success": True, "recipient": recipient, "delivery_status": "sent", "message": "ส่งรายงานผู้บริหารสำเร็จแล้ว", "timestamp": datetime.now(timezone.utc).isoformat()}
 
@@ -1923,6 +1964,7 @@ def send_notification_email(
     if not recipient or "@" not in recipient:
         raise HTTPException(status_code=400, detail="Invalid recipient email address")
 
+    resend_key = os.getenv("RESEND_API_KEY", "").strip()
     smtp_host = os.getenv("SMTP_HOST", "").strip()
     smtp_port = int(os.getenv("SMTP_PORT", "587"))
     smtp_user = os.getenv("SMTP_USER", "").strip()
@@ -1965,7 +2007,15 @@ def send_notification_email(
     email_sent = False
     delivery_note = ""
 
-    if smtp_host and smtp_user and smtp_password:
+    if resend_key:
+        text_body = "รายงานการแจ้งเตือนสุขภาพธุรกิจ\n" + "\n".join(
+            f"- {n.get('title') or n.get('head') or 'การแจ้งเตือน'}: {n.get('message') or n.get('body') or n.get('text') or ''}"
+            for n in payload.notifications
+        )
+        _deliver_email_via_resend(recipient, payload.subject, text_body, html_content)
+        email_sent = True
+        delivery_note = f"ผู้ให้บริการ Resend รับอีเมลแจ้งเตือนสำหรับ {recipient} แล้ว"
+    elif smtp_host and smtp_user and smtp_password:
         import smtplib
         from email.mime.multipart import MIMEMultipart
         from email.mime.text import MIMEText
@@ -1987,7 +2037,7 @@ def send_notification_email(
             print(f"Notification email delivery failed: {type(exc).__name__}: {exc}")
             raise HTTPException(status_code=502, detail="ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า SMTP หรืออีเมลผู้รับ")
     else:
-        raise HTTPException(status_code=503, detail="ยังไม่ได้ตั้งค่า SMTP จึงยังส่งอีเมลจริงไม่ได้ กรุณาตั้งค่า SMTP_HOST, SMTP_USER และ SMTP_PASSWORD")
+        raise HTTPException(status_code=503, detail="ตั้งค่า RESEND_API_KEY และ RESEND_FROM หรือ SMTP_HOST, SMTP_USER, SMTP_PASSWORD ก่อน")
 
     return {
         "success": True,
