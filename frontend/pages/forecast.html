@@ -1,49 +1,400 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>BusinessPilot AI | Forecast</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-<link rel="stylesheet" href="../assets/css/feature_pages.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-<script defer src="../assets/js/feature_pages.js"></script>
-<script src="../assets/js/api-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusinessPilot AI | Forecast & Projections</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Google Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Base & Custom Styles -->
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/forecast.css">
+
+    <script src="../assets/js/api-config.js"></script>
 </head>
+
 <body data-page="forecast">
-<div class="app-shell">
-<aside class="sidebar">
-<div class="logo-area"><div class="logo">AI</div><div><h1>BusinessPilot</h1><p>AI Platform</p></div></div>
-<nav class="menu" aria-label="Main navigation">
-<a href="dashboard.html" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-<a href="upload_data.html" class="menu-item"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Data</span></a>
-<a href="business_health.html" class="menu-item"><i class="fa-solid fa-heart-pulse"></i><span>Business Health</span></a>
-<a href="forecast.html" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Forecast</span></a>
-<a href="scenario.html" class="menu-item"><i class="fa-solid fa-sliders"></i><span>Scenario</span></a>
-<a href="recommendation.html" class="menu-item"><i class="fa-solid fa-robot"></i><span>AI Recommendation</span></a>
-<a href="report.html" class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
-<a href="notification.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
-<a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
-</nav>
-<div class="logout"><a href="login.html" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></div>
-</aside>
-<main class="main">
-<p class="eyebrow">BusinessPilot AI workspace</p>
-<h1 class="page-title">Forecast</h1>
-<p class="muted">Forecast overview and trends from your latest business analysis.</p>
-<div id="pageContent"></div>
-<p class="footer">Estimates are based on the latest analysis saved in this browser. Verify important financial decisions independently.</p>
-</main>
-</div>
-<script>
-document.getElementById("logoutLink").addEventListener("click", async function(event) {
- event.preventDefault();
- try { await fetch((window.BUSINESSPILOT_API_URL || localStorage.getItem("api_url") || "https://businesspilot-ai-backend-yf1s.onrender.com") + "/logout", {method:"POST",headers:{"Authorization":"Bearer "+(localStorage.getItem("access_token")||"")} }); } catch (_) {}
- ["access_token","user","uploaded_filename","analysis_result","initial_cash"].forEach(k=>localStorage.removeItem(k));
- window.location.href="login.html";
-});
-</script>
+    <div class="dashboard-container">
+
+        <!-- =========================================
+             SIDEBAR NAVIGATION
+        ========================================= -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo">AI</div>
+                <div>
+                    <h1>BusinessPilot</h1>
+                    <p>AI Platform</p>
+                </div>
+            </div>
+            <nav class="menu" aria-label="Main navigation">
+                <a href="dashboard.html" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+                <a href="upload_data.html" class="menu-item"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Data</span></a>
+                <a href="business_health.html" class="menu-item"><i class="fa-solid fa-heart-pulse"></i><span>Business Health</span></a>
+                <a href="forecast.html" class="menu-item active"><i class="fa-solid fa-chart-line"></i><span>Forecast</span></a>
+                <a href="recommendation.html" class="menu-item"><i class="fa-solid fa-robot"></i><span>AI Recommendation</span></a>
+                <a href="report.html" class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+                <a href="notification.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+                <a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+            </nav>
+            <div class="logout">
+                <a href="login.html" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- =========================================
+             MAIN CONTENT AREA
+        ========================================= -->
+        <main class="main-content">
+
+            <!-- Topbar -->
+            <header class="topbar">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="live-indicator"></span>
+                        <p class="text-xs uppercase tracking-widest text-cyan-400 font-bold">AI Predictive Modeling</p>
+                    </div>
+                    <h2 class="text-3xl font-bold mt-1">Financial Forecast</h2>
+                    <p class="text-sm text-slate-400">แบบจำลองและพยากรณ์รายได้-รายจ่าย และกระแสเงินสดในอนาคตจากข้อมูลจริง</p>
+                </div>
+
+                <div class="top-actions">
+                    <span id="forecastSourceBadge" class="forecast-badge">
+                        <i class="fa-solid fa-chart-line"></i> รอผลวิเคราะห์ข้อมูล
+                    </span>
+                    <div class="profile flex items-center gap-3">
+                        <div class="avatar">AI</div>
+                        <div>
+                            <h4 id="profileName" class="text-sm font-semibold">Business Owner</h4>
+                            <p class="text-xs text-slate-400">Founder</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- =========================================
+                 EMPTY STATE HERO (When No Uploaded Data)
+            ========================================= -->
+            <div id="emptyForecastHero" class="empty-forecast-hero" style="display: none;">
+                <div class="max-w-md mx-auto">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mx-auto mb-4 text-cyan-400 text-3xl">
+                        <i class="fa-solid fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">ยังไม่มีข้อมูลสำหรับพยากรณ์</h3>
+                    <p class="text-sm text-slate-400 mb-6 leading-relaxed">
+                        ระบบต้องการข้อมูลรายรับ-รายจ่ายย้อนหลังอย่างน้อย 1 ช่วงเวลา เพื่อคำนวณแนวโน้มและสร้างกราฟพยากรณ์ความแม่นยำสูง
+                    </p>
+                    <div class="flex items-center justify-center gap-4 flex-wrap">
+                        <a href="upload_data.html" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium hover:opacity-90 transition text-sm shadow-lg shadow-cyan-500/25">
+                            <i class="fa-solid fa-file-arrow-up mr-2"></i> ไปหน้า Upload Data
+                        </a>
+                        <button id="loadSampleBtn" type="button" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700 transition text-sm font-medium">
+                            <i class="fa-solid fa-database mr-2 text-cyan-400"></i> ทดลองใช้ข้อมูลตัวอย่าง
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =========================================
+                 ACTIVE FORECAST DASHBOARD
+            ========================================= -->
+            <div id="forecastContent" class="mt-8">
+
+                <!-- Horizon & Scenario Selector Toolbar -->
+                <div class="forecast-topbar">
+                    <!-- Horizon selector -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold mr-1">ระยะเวลาพยากรณ์:</span>
+                        <div class="filter-group">
+                            <button class="filter-btn" data-horizon="3">3 เดือน</button>
+                            <button class="filter-btn active" data-horizon="6">6 เดือน</button>
+                            <button class="filter-btn" data-horizon="12">12 เดือน</button>
+                        </div>
+                    </div>
+
+                    <!-- Scenario selector -->
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-xs text-slate-400 uppercase tracking-wider font-semibold mr-1">สถานการณ์จำลอง:</span>
+                        <div class="filter-group">
+                            <button class="filter-btn active" data-scenario="baseline">
+                                <i class="fa-solid fa-bullseye text-cyan-400 mr-1"></i> ปกติ (Baseline)
+                            </button>
+                            <button class="filter-btn" data-scenario="optimistic">
+                                <i class="fa-solid fa-rocket text-emerald-400 mr-1"></i> เติบโต (+15%)
+                            </button>
+                            <button class="filter-btn" data-scenario="conservative">
+                                <i class="fa-solid fa-shield-halved text-amber-400 mr-1"></i> ระมัดระวัง (-15%)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4 KPI Metric Cards -->
+                <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+                    <!-- 1. Projected Revenue -->
+                    <div class="glass-forecast forecast-metric-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-slate-400 font-medium">คาดการณ์รายรับเดือนหน้า</span>
+                            <div class="metric-icon-wrap icon-cyan">
+                                <i class="fa-solid fa-chart-line"></i>
+                            </div>
+                        </div>
+                        <h3 id="kpiProjectedRev" class="text-2xl font-bold text-white">฿0</h3>
+                        <p id="kpiRevTrend" class="text-xs mt-2 text-slate-400 font-medium">คำนวณจากแนวโน้มจริง</p>
+                        <p id="kpiRevHorizonTotal" class="text-xs mt-1 text-slate-500">รวม 6 เดือน: ฿0</p>
+                    </div>
+
+                    <!-- 2. Projected Expenses -->
+                    <div class="glass-forecast forecast-metric-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-slate-400 font-medium">คาดการณ์รายจ่ายเดือนหน้า</span>
+                            <div class="metric-icon-wrap icon-rose">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+                        </div>
+                        <h3 id="kpiProjectedExp" class="text-2xl font-bold text-white">฿0</h3>
+                        <p id="kpiExpTrend" class="text-xs mt-2 text-slate-400 font-medium">คำนวณจากแนวโน้มจริง</p>
+                        <p id="kpiExpHorizonTotal" class="text-xs mt-1 text-slate-500">รวม 6 เดือน: ฿0</p>
+                    </div>
+
+                    <!-- 3. Projected Profit / Loss -->
+                    <div class="glass-forecast forecast-metric-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-slate-400 font-medium">กำไรสุทธิคาดการณ์เดือนหน้า</span>
+                            <div class="metric-icon-wrap icon-emerald">
+                                <i class="fa-solid fa-coins"></i>
+                            </div>
+                        </div>
+                        <h3 id="kpiProjectedProfit" class="text-2xl font-bold text-emerald-400">฿0</h3>
+                        <p id="kpiProfitStatus" class="text-xs mt-2 text-slate-400 font-medium">อัตรากำไรคาดการณ์: 0%</p>
+                        <p id="kpiProfitHorizonTotal" class="text-xs mt-1 text-slate-500">กำไรสะสม 6 เดือน: ฿0</p>
+                    </div>
+
+                    <!-- 4. Projected Runway -->
+                    <div class="glass-forecast forecast-metric-card">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-slate-400 font-medium">ระยะเวลาเงินสดคงเหลือ</span>
+                            <div class="metric-icon-wrap icon-purple">
+                                <i class="fa-solid fa-clock"></i>
+                            </div>
+                        </div>
+                        <h3 id="kpiProjectedRunway" class="text-2xl font-bold text-purple-400">--</h3>
+                        <p id="kpiRunwayStatus" class="text-xs mt-2 text-slate-400 font-medium">รอการวิเคราะห์</p>
+                        <p id="kpiRunwayEndCash" class="text-xs mt-1 text-slate-500">เงินสดสิ้นสุด: ฿0</p>
+                    </div>
+
+                </div>
+
+                <!-- =========================================
+                     PRIMARY CHART: REVENUE & EXPENSE TRAJECTORY
+                ========================================= -->
+                <div class="glass-forecast p-6 mt-8">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-chart-area text-cyan-400"></i>
+                                แนวโน้มรายรับและค่าใช้จ่าย (Actual vs. Forecast Trajectory)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                เส้นทึบแสดงข้อมูลจริงจากไฟล์ CSV และเส้นประแสดงผลการพยากรณ์เชิงสถิติ (Linear Trend) พร้อมจำลองสถานการณ์
+                            </p>
+                        </div>
+                    </div>
+                    <div class="chart-container-large">
+                        <canvas id="revenueExpenseChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- =========================================
+                     DUAL CHARTS: CASH BALANCE & PROFIT/LOSS
+                ========================================= -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+
+                    <!-- Cash Balance Runway Chart -->
+                    <div class="glass-forecast p-6">
+                        <div class="mb-4">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-piggy-bank text-purple-400"></i>
+                                คาดการณ์กระแสเงินสดสะสม (Cash Runway Depletion)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                ทิศทางเงินสดหมุนเวียนคงเหลือ โดยคำนวณจากเงินสดตั้งต้นบวกกำไร/ขาดทุนแต่ละเดือน
+                            </p>
+                        </div>
+                        <div class="chart-container-medium">
+                            <canvas id="cashBalanceChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Monthly Profit / Loss Bar Chart -->
+                    <div class="glass-forecast p-6">
+                        <div class="mb-4">
+                            <h3 class="text-base font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-scale-balanced text-emerald-400"></i>
+                                กำไร / ขาดทุนสุทธิต่อเดือน (Monthly Net Profit / Loss)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                แท่งสีเขียวคือกำไร แท่งสีแดงคือขาดทุนสุทธิ (สีโปร่งใสแทนช่วงการพยากรณ์)
+                            </p>
+                        </div>
+                        <div class="chart-container-medium">
+                            <canvas id="profitLossChart"></canvas>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- =========================================
+                     WHAT-IF SIMULATION PLAYGROUND
+                ========================================= -->
+                <div class="glass-forecast p-6 mt-8">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-sliders text-cyan-400"></i>
+                                แบบจำลองสถานการณ์การเงิน (Interactive What-If Simulation)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                ปรับตัวแปรรายได้และค่าใช้จ่ายแบบเรียลไทม์เพื่อดูผลกระทบต่อเงินสดสำรองและจุดคุ้มทุน
+                            </p>
+                        </div>
+                        <button id="resetSimBtn" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium border border-slate-700 transition">
+                            <i class="fa-solid fa-rotate-left mr-1"></i> รีเซ็ตตัวแปร
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+                        <!-- Slider 1: Revenue Delta -->
+                        <div class="slider-control">
+                            <div class="slider-label-row">
+                                <span class="text-slate-300 font-medium">ปรับเป้าหมายรายได้ (Revenue):</span>
+                                <span id="simRevenueVal" class="text-cyan-400 font-bold">0%</span>
+                            </div>
+                            <input id="simRevenueSlider" type="range" class="slider-input" min="-50" max="100" step="5" value="0">
+                            <div class="flex justify-between text-[11px] text-slate-500">
+                                <span>-50% (วิกฤต)</span>
+                                <span>0% (ตามข้อมูลจริง)</span>
+                                <span>+100% (เติบโตก้าวกระโดด)</span>
+                            </div>
+                        </div>
+
+                        <!-- Slider 2: Expense Delta -->
+                        <div class="slider-control">
+                            <div class="slider-label-row">
+                                <span class="text-slate-300 font-medium">ปรับเป้าหมายค่าใช้จ่าย (Expense):</span>
+                                <span id="simExpenseVal" class="text-rose-400 font-bold">0%</span>
+                            </div>
+                            <input id="simExpenseSlider" type="range" class="slider-input" min="-50" max="100" step="5" value="0">
+                            <div class="flex justify-between text-[11px] text-slate-500">
+                                <span>-50% (ลดต้นทุนเข้มข้น)</span>
+                                <span>0% (ตามข้อมูลจริง)</span>
+                                <span>+100% (ขยายงานเพิ่ม)</span>
+                            </div>
+                        </div>
+
+                        <!-- Input 3: Initial Cash -->
+                        <div class="slider-control">
+                            <div class="slider-label-row">
+                                <span class="text-slate-300 font-medium">เงินสดสำรองตั้งต้น (฿):</span>
+                            </div>
+                            <input id="simCashInput" type="number" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm outline-none focus:border-cyan-500" value="100000" min="0" step="10000">
+                            <span class="text-[11px] text-slate-500">เงินสดที่มีอยู่ ณ วันเริ่มต้นคำนวณ</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- =========================================
+                     AI STRATEGIC FORECAST & RECOMMENDATIONS
+                ========================================= -->
+                <div class="glass-forecast p-6 mt-8">
+                    <h3 class="text-lg font-bold text-white mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-cyan-400"></i>
+                        บทวิเคราะห์และข้อเสนอแนะเชิงกลยุทธ์จาก AI (AI Strategic Forecast)
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-6">
+                        สังเคราะห์แนวโน้มเชิงสถิติและความเสี่ยงจากชุดข้อมูลที่คุณอัปโหลด
+                    </p>
+
+                    <div id="aiForecastInsights" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Populated dynamically by forecast.js -->
+                    </div>
+                </div>
+
+                <!-- =========================================
+                     MONTHLY BREAKDOWN TABLE
+                ========================================= -->
+                <div class="glass-forecast p-6 mt-8">
+                    <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                <i class="fa-solid fa-table text-cyan-400"></i>
+                                ตารางแจกแจงตัวเลขรายเดือน (Monthly Breakdown Table)
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-1">
+                                เปรียบเทียบข้อมูลจริงและตัวเลขที่พยากรณ์ได้อย่างละเอียด
+                            </p>
+                        </div>
+
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <div class="filter-group">
+                                <button class="filter-btn active" data-table-filter="all">ทั้งหมด</button>
+                                <button class="filter-btn" data-table-filter="actual">ข้อมูลจริง</button>
+                                <button class="filter-btn" data-table-filter="forecast">พยากรณ์</button>
+                            </div>
+
+                            <button id="exportForecastCsv" class="px-4 py-2 rounded-xl bg-cyan-600/20 text-cyan-300 border border-cyan-500/30 hover:bg-cyan-600/30 transition text-xs font-semibold flex items-center gap-2">
+                                <i class="fa-solid fa-download"></i> ส่งออกเป็น CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="forecast-table-wrap">
+                        <table class="forecast-table">
+                            <thead>
+                                <tr>
+                                    <th>เดือน (Month)</th>
+                                    <th>ประเภทข้อมูล</th>
+                                    <th>รายรับ (Revenue)</th>
+                                    <th>ค่าใช้จ่าย (Expense)</th>
+                                    <th>กำไร/ขาดทุน (Profit)</th>
+                                    <th>อัตรากำไร (%)</th>
+                                    <th>เงินสดสะสม (Cash)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="forecastTableBody">
+                                <!-- Populated dynamically by forecast.js -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer note -->
+            <p class="footer">
+                การพยากรณ์ทางการเงินเป็นการประเมินแนวโน้มเชิงสถิติจากข้อมูลที่อัปโหลดและตัวแปรสถานการณ์จำลอง ควรตรวจสอบปัจจัยทางธุรกิจจริงร่วมด้วย
+            </p>
+
+        </main>
+    </div>
+
+    <!-- Forecast Javascript Controller -->
+    <script src="../assets/js/forecast.js"></script>
 </body>
+
 </html>

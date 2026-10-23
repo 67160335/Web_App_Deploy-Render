@@ -1,0 +1,489 @@
+/* =====================================================
+   BusinessPilot AI - AI Recommendation & Strategic Copilot
+   ===================================================== */
+
+:root {
+    --rec-glass-bg: rgba(15, 23, 42, 0.78);
+    --rec-card-bg: rgba(30, 41, 59, 0.65);
+    --rec-card-hover: rgba(30, 41, 59, 0.9);
+    --rec-border: rgba(255, 255, 255, 0.08);
+    --rec-border-glow: rgba(6, 182, 212, 0.3);
+    --rec-cyan: #06b6d4;
+    --rec-blue: #3b82f6;
+    --rec-emerald: #10b981;
+    --rec-rose: #f43f5e;
+    --rec-amber: #f59e0b;
+    --rec-purple: #8b5cf6;
+    --rec-muted: #94a3b8;
+}
+
+/* Glass Panels */
+.glass-panel {
+    background: var(--rec-glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--rec-border);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    transition: all 0.25s ease;
+}
+
+/* Header Banner */
+.rec-header-banner {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.92));
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+}
+
+.rec-header-banner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #06b6d4, #8b5cf6, #10b981);
+}
+
+.ai-engine-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    background: rgba(6, 182, 212, 0.12);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    color: #38bdf8;
+}
+
+.ai-engine-pill.openrouter {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: rgba(139, 92, 246, 0.4);
+    color: #c084fc;
+}
+
+/* Diagnosis Grid */
+.diagnosis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.diagnosis-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 16px 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.diagnosis-card.focus {
+    border-left: 4px solid var(--rec-cyan);
+}
+
+.diagnosis-card.bottleneck {
+    border-left: 4px solid var(--rec-rose);
+}
+
+.diagnosis-card.overall {
+    border-left: 4px solid var(--rec-emerald);
+}
+
+/* Filter Bar */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 20px;
+    border-radius: 16px;
+}
+
+.filter-btn-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.filter-pill {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    color: var(--rec-muted);
+    padding: 6px 14px;
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+}
+
+.filter-pill.active {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(37, 99, 235, 0.25));
+    border-color: rgba(6, 182, 212, 0.5);
+    color: #ffffff;
+    font-weight: 600;
+}
+
+/* Strategic Action Cards */
+.action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 20px;
+}
+
+.action-card {
+    background: var(--rec-card-bg);
+    border: 1px solid var(--rec-border);
+    border-radius: 18px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.action-card:hover {
+    background: var(--rec-card-hover);
+    border-color: var(--rec-border-glow);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 32px -12px rgba(6, 182, 212, 0.18);
+}
+
+.action-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+    gap: 10px;
+}
+
+.priority-tag {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.priority-tag.critical {
+    background: rgba(244, 63, 94, 0.15);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    color: #fb7185;
+}
+
+.priority-tag.high {
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    color: #fbbf24;
+}
+
+.priority-tag.growth {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+}
+
+.category-tag {
+    font-size: 11px;
+    color: var(--rec-muted);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.action-card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.action-card-rationale {
+    font-size: 13px;
+    color: #cbd5e1;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    background: rgba(15, 23, 42, 0.4);
+    padding: 10px 12px;
+    border-radius: 10px;
+    border-left: 3px solid rgba(6, 182, 212, 0.6);
+}
+
+.impact-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #38bdf8;
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px dashed rgba(6, 182, 212, 0.35);
+    padding: 8px 12px;
+    border-radius: 8px;
+    margin-bottom: 18px;
+}
+
+/* Steps Checklist */
+.steps-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--rec-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.steps-list {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 18px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.step-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13px;
+    color: #e2e8f0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.step-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 17px;
+    height: 17px;
+    border: 1.5px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    background: transparent;
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+    margin-top: 2px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.step-checkbox:checked {
+    background: #06b6d4;
+    border-color: #06b6d4;
+}
+
+.step-checkbox:checked::before {
+    content: "\f00c";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    font-size: 10px;
+    color: #041019;
+}
+
+.step-text {
+    line-height: 1.45;
+    transition: all 0.2s ease;
+}
+
+.step-item.completed .step-text {
+    text-decoration: line-through;
+    color: #64748b;
+}
+
+/* Card Footer Meta */
+.action-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--rec-muted);
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+    padding-top: 14px;
+    margin-top: auto;
+}
+
+/* Progress bar inside card */
+.card-progress-bar {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 14px;
+}
+
+.card-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #06b6d4, #10b981);
+    transition: width 0.3s ease;
+}
+
+/* Interactive AI CFO Chat Drawer / Box */
+.ai-cfo-chat-panel {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 20px;
+    padding: 24px;
+    margin-top: 30px;
+}
+
+.chat-history {
+    max-height: 380px;
+    overflow-y: auto;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: rgba(11, 17, 32, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 14px;
+    margin-bottom: 16px;
+}
+
+.chat-msg {
+    max-width: 85%;
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 13px;
+    line-height: 1.55;
+    word-break: break-word;
+}
+
+.chat-msg.cfo {
+    align-self: flex-start;
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    color: #f1f5f9;
+}
+
+.chat-msg.user {
+    align-self: flex-end;
+    background: linear-gradient(135deg, #0284c7, #2563eb);
+    color: #ffffff;
+}
+
+.quick-prompts-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.quick-prompt-btn {
+    background: rgba(6, 182, 212, 0.08);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    color: #38bdf8;
+    padding: 5px 12px;
+    border-radius: 9999px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-prompt-btn:hover {
+    background: rgba(6, 182, 212, 0.2);
+    color: #ffffff;
+    border-color: #06b6d4;
+}
+
+.chat-input-bar {
+    display: flex;
+    gap: 10px;
+}
+
+.chat-input-bar input {
+    flex: 1;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    padding: 12px 18px;
+    border-radius: 12px;
+    font-size: 13.5px;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.chat-input-bar input:focus {
+    border-color: #06b6d4;
+    box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.2);
+}
+
+.chat-send-btn {
+    background: linear-gradient(135deg, #06b6d4, #2563eb);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 0 22px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+}
+
+.chat-send-btn:hover {
+    opacity: 0.92;
+    transform: translateY(-1px);
+}
+
+.chat-send-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Print / Export Styles */
+@media print {
+    .sidebar, .topbar, .filter-bar, .ai-cfo-chat-panel, .app-version, .no-print {
+        display: none !important;
+    }
+    body, .dashboard-container, .main-content {
+        background: #ffffff !important;
+        color: #000000 !important;
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    .action-card {
+        border: 1px solid #cbd5e1 !important;
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        break-inside: avoid;
+    }
+    .action-card-title {
+        color: #0f172a !important;
+    }
+    .action-card-rationale {
+        background: #e2e8f0 !important;
+        color: #1e293b !important;
+    }
+    .step-text {
+        color: #334155 !important;
+    }
+}

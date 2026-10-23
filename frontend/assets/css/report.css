@@ -1,0 +1,150 @@
+/* =====================================================
+   BusinessPilot AI - Executive Report Styles
+   ===================================================== */
+
+:root {
+    --rep-glass-bg: rgba(15, 23, 42, 0.75);
+    --rep-border: rgba(255, 255, 255, 0.08);
+    --rep-cyan: #06b6d4;
+    --rep-blue: #2563eb;
+    --rep-emerald: #10b981;
+    --rep-rose: #f43f5e;
+    --rep-amber: #f59e0b;
+    --rep-muted: #94a3b8;
+}
+
+.glass-report {
+    background: var(--rep-glass-bg);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--rep-border);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+    transition: all 0.25s ease;
+}
+
+.report-header-banner {
+    background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: 20px;
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+}
+
+.report-header-banner::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #06b6d4, #2563eb, #10b981);
+}
+
+.report-metric-tile {
+    padding: 18px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Ratio Indicator Bar */
+.ratio-bar-wrap {
+    width: 100%;
+    height: 8px;
+    background: #1e293b;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.ratio-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.4s ease;
+}
+
+/* Table */
+.report-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
+    text-align: left;
+}
+
+.report-table th {
+    background: rgba(15, 23, 42, 0.95);
+    color: var(--rep-muted);
+    font-weight: 600;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    white-space: nowrap;
+}
+
+.report-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    white-space: nowrap;
+}
+
+.report-table tr:hover td {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.report-table tfoot td {
+    background: rgba(15, 23, 42, 0.9);
+    border-top: 2px solid rgba(255, 255, 255, 0.1);
+    font-weight: 700;
+}
+
+/* Print Optimization */
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+    }
+
+    .sidebar,
+    .topbar,
+    .report-actions,
+    .no-print {
+        display: none !important;
+    }
+
+    .main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+    }
+
+    .glass-report,
+    .report-header-banner,
+    .report-metric-tile {
+        background: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #0f172a !important;
+        box-shadow: none !important;
+    }
+
+    .report-table th {
+        background: #f1f5f9 !important;
+        color: #334155 !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+    }
+
+    .report-table td {
+        border-bottom: 1px solid #e2e8f0 !important;
+        color: #0f172a !important;
+    }
+
+    .text-white {
+        color: #0f172a !important;
+    }
+
+    .text-slate-300,
+    .text-slate-400 {
+        color: #475569 !important;
+    }
+}

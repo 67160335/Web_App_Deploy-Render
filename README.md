@@ -24,6 +24,10 @@
 3. Open `http://127.0.0.1:8000/docs` and check `GET /health`.
 4. Serve `frontend/pages/` using a local static web server. The frontend defaults to the deployed API URL; set `localStorage.api_url` to override it.
 
+### Executive report email
+
+The Reports page sends an executive summary to the recipient entered beside the email button. For actual delivery, set `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, and `SMTP_FROM` in `.env` (or the deployment environment). For Gmail, use an App Password with 2-Step Verification. The API reports a delivery error when SMTP is missing or rejects the message; it never labels a queued or simulated message as sent.
+
 The API stores its database at `data/businesspilot.db` and uploaded CSV files at `data/uploads/`. A legacy `database.db` may remain in the project root while an older local server process holds it open; the startup migration fallback can copy it into `data/` if needed. CSV dates currently use `YYYY-MM-DD` format. The upload page supports mapping date, revenue, expense, and profit columns, including automatic profit calculation.
 
 ## Docker deployment (required runtime)

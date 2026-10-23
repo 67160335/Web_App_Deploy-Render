@@ -1,49 +1,235 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="th">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-<title>BusinessPilot AI | Recommendations</title>
-<link rel="stylesheet" href="../assets/css/feature_pages.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-<script defer src="../assets/js/feature_pages.js"></script>
-<script src="../assets/js/api-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusinessPilot AI | Strategic Decision & CFO Recommendations</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Google Fonts: Inter & Sarabun -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Base Dashboard & Dedicated Recommendation CSS -->
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/recommendation.css">
+
+    <style>
+        body {
+            font-family: 'Inter', 'Sarabun', sans-serif;
+            background-color: #0b1120;
+            color: #f8fafc;
+        }
+        .app-version {
+            position: fixed;
+            right: 12px;
+            bottom: 8px;
+            z-index: 9999;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(15,23,42,.88);
+            color: #94a3b8;
+            font: 11px/1.4 monospace;
+            border: 1px solid rgba(148,163,184,.22);
+            pointer-events: none;
+        }
+    </style>
+
+    <script src="../assets/js/api-config.js"></script>
+    <script defer src="../assets/js/recommendation.js"></script>
 </head>
-<body data-page="recommendation">
-<div class="app-shell">
-<aside class="sidebar">
-<div class="logo-area"><div class="logo">AI</div><div><h1>BusinessPilot</h1><p>AI Platform</p></div></div>
-<nav class="menu" aria-label="Main navigation">
-<a href="dashboard.html" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-<a href="upload_data.html" class="menu-item"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Data</span></a>
-<a href="business_health.html" class="menu-item"><i class="fa-solid fa-heart-pulse"></i><span>Business Health</span></a>
-<a href="forecast.html" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Forecast</span></a>
-<a href="scenario.html" class="menu-item"><i class="fa-solid fa-sliders"></i><span>Scenario</span></a>
-<a href="recommendation.html" class="menu-item"><i class="fa-solid fa-robot"></i><span>AI Recommendation</span></a>
-<a href="report.html" class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
-<a href="notification.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
-<a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
-</nav>
-<div class="logout"><a href="login.html" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></div>
-</aside>
-<main class="main">
-<p class="eyebrow">BusinessPilot AI workspace</p>
-<h1 class="page-title">Recommendations</h1>
-<p class="muted">Action items based on your latest business analysis.</p>
-<div id="pageContent"></div>
-<p class="footer">Estimates are based on the latest analysis saved in this browser. Verify important financial decisions independently.</p>
-</main>
-</div>
-<script>
-document.getElementById("logoutLink").addEventListener("click", async function(event) {
- event.preventDefault();
- try { await fetch((window.BUSINESSPILOT_API_URL || localStorage.getItem("api_url") || "https://businesspilot-ai-backend-yf1s.onrender.com") + "/logout", {method:"POST",headers:{"Authorization":"Bearer "+(localStorage.getItem("access_token")||"")} }); } catch (_) {}
- ["access_token","user","uploaded_filename","analysis_result","initial_cash"].forEach(k=>localStorage.removeItem(k));
- window.location.href="login.html";
-});
-</script>
+<body>
+    <div class="app-version" title="BusinessPilot build version">BusinessPilot v1.0.3 | AI Strategic Engine</div>
+
+    <div class="dashboard-container">
+        <!-- =========================================
+             SIDEBAR
+        ========================================= -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo">AI</div>
+                <div>
+                    <h1>BusinessPilot</h1>
+                    <p>AI Decision Platform</p>
+                </div>
+            </div>
+
+            <nav class="menu" aria-label="Main navigation">
+                <a href="dashboard.html" class="menu-item">
+                    <i class="fa-solid fa-house"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="upload_data.html" class="menu-item">
+                    <i class="fa-solid fa-file-arrow-up"></i>
+                    <span>Upload Data</span>
+                </a>
+                <a href="business_health.html" class="menu-item">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Business Health</span>
+                </a>
+                <a href="forecast.html" class="menu-item">
+                    <i class="fa-solid fa-chart-line"></i>
+                    <span>Forecast</span>
+                </a>
+                <a href="recommendation.html" class="menu-item active">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>AI Recommendation</span>
+                </a>
+                <a href="report.html" class="menu-item">
+                    <i class="fa-solid fa-file-lines"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="notification.html" class="menu-item">
+                    <i class="fa-solid fa-bell"></i>
+                    <span>Notifications</span>
+                </a>
+                <a href="settings.html" class="menu-item">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="logout">
+                <a href="login.html" id="logoutLink">
+                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- =========================================
+             MAIN CONTENT
+        ========================================= -->
+        <main class="main-content">
+            <!-- Topbar -->
+            <header class="topbar flex flex-wrap justify-between items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-extrabold text-white tracking-tight flex items-center gap-2">
+                        <i class="fa-solid fa-compass text-cyan-400"></i> AI Decision & Recommendations
+                    </h2>
+                    <p class="text-slate-400 text-sm mt-0.5">
+                        แผนปฏิบัติการเชิงกลยุทธ์และการตัดสินใจทางธุรกิจขับเคลื่อนด้วยปัญญาประดิษฐ์ระดับ CFO
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-2.5">
+                    <button id="refreshPlanBtn" class="px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700/80 border border-slate-700 text-slate-300 text-xs font-medium transition flex items-center gap-1.5" title="รีเซ็ตความคืบหน้า">
+                        <i class="fa-solid fa-rotate-right"></i> รีเซ็ต Checklist
+                    </button>
+                    <button id="printPlanBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white text-xs font-semibold shadow-lg shadow-cyan-500/20 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-print"></i> พิมพ์ / บันทึก PDF
+                    </button>
+                </div>
+            </header>
+
+            <div class="mt-6 space-y-6">
+                <!-- 1. AI Strategic Diagnosis Banner -->
+                <div id="diagnosisBanner" class="rec-header-banner">
+                    <!-- Populated by recommendation.js -->
+                    <div class="text-center py-6 text-slate-400">
+                        <i class="fa-solid fa-circle-notch fa-spin text-cyan-400 text-2xl mb-2"></i>
+                        <p class="text-sm">กำลังโหลดบทวินิจฉัยและข้อมูลกลยุทธ์ AI...</p>
+                    </div>
+                </div>
+
+                <!-- 2. Action Filter Bar -->
+                <div class="filter-bar glass-panel">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider mr-1">
+                            <i class="fa-solid fa-sliders text-cyan-400 mr-1"></i>หมวดหมู่:
+                        </span>
+                        <div class="filter-btn-group">
+                            <button class="filter-pill active" data-filter="all">ทั้งหมด (All)</button>
+                            <button class="filter-pill" data-filter="critical">🚨 เร่งด่วนวิกฤต (Critical)</button>
+                            <button class="filter-pill" data-filter="cash">💵 บริหารเงินสด (Cash Flow)</button>
+                            <button class="filter-pill" data-filter="cost">✂️ ควบคุมต้นทุน (Cost Control)</button>
+                            <button class="filter-pill" data-filter="growth">🚀 เพิ่มยอดขาย (Growth)</button>
+                        </div>
+                    </div>
+
+                    <div class="text-xs text-slate-400 flex items-center gap-2">
+                        <i class="fa-solid fa-square-check text-cyan-400"></i>
+                        <span>คลิกเพื่อเช็คถูกขั้นตอนที่ทำแล้ว (ความคืบหน้าจะบันทึกอัตโนมัติ)</span>
+                    </div>
+                </div>
+
+                <!-- 3. Strategic Action Cards Grid -->
+                <div id="actionCardsGrid" class="action-grid">
+                    <!-- Populated by recommendation.js -->
+                </div>
+
+                <!-- 4. Interactive AI CFO Copilot Consultation Box -->
+                <div class="ai-cfo-chat-panel">
+                    <div class="flex items-center justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center text-white shadow-md shadow-cyan-500/30">
+                                <i class="fa-solid fa-user-tie text-lg"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                                    ปรึกษา AI CFO Copilot แบบเจาะลึก
+                                    <span class="text-[10px] bg-cyan-950/80 text-cyan-400 border border-cyan-800/60 px-2 py-0.5 rounded-full font-semibold">24/7 Strategic Advisor</span>
+                                </h3>
+                                <p class="text-xs text-slate-400">ถามข้อสงสัยเกี่ยวกับการตัดสินใจ การจ้างคน หรือการปรับงบประมาณจากตัวเลขจริงของธุรกิจคุณ</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Message Area -->
+                    <div id="chatHistory" class="chat-history">
+                        <div class="chat-msg cfo">
+                            <div class="flex items-center gap-2 mb-1 text-cyan-400 font-semibold text-xs">
+                                <i class="fa-solid fa-robot"></i> AI CFO Copilot
+                            </div>
+                            <div>
+                                สวัสดีครับ ผมคือ AI CFO ประจำธุรกิจของคุณ ได้ประเมินผลตัวเลขการเงินล่าสุดเรียบร้อยแล้ว หากคุณมีข้อสงสัยหรือกำลังลังเลในการตัดสินใจ เช่น <strong>ควรจ้างพนักงานเพิ่มไหม?</strong>, <strong>ลดค่าใช้จ่ายอย่างไรให้ไม่กระทบยอดขาย?</strong> หรือ <strong>วางแผนกระแสเงินสดอย่างไร?</strong> สามารถพิมพ์ถามหรือเลือกหัวข้อด่วนด้านล่างได้เลยครับ
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Suggestions -->
+                    <div class="quick-prompts-bar">
+                        <button class="quick-prompt-btn">ควรจ้างพนักงานใหม่เพิ่มตอนนี้ไหม?</button>
+                        <button class="quick-prompt-btn">มีวิธีลดต้นทุนเร่งด่วน 15% อย่างไรบ้าง?</button>
+                        <button class="quick-prompt-btn">ยอดขายชะลอตัว ควรทำโปรโมชันแบบไหน?</button>
+                        <button class="quick-prompt-btn">ควรขอสินเชื่อหมุนเวียน (OD) ตอนนี้หรือไม่?</button>
+                    </div>
+
+                    <!-- Input Bar -->
+                    <div class="chat-input-bar">
+                        <input id="chatInput" type="text" placeholder="พิมพ์คำถามที่ต้องการปรึกษา AI CFO ที่นี่ เช่น 'ถ้าต้องการลดรายจ่าย 20% ควรเริ่มจากส่วนไหนก่อน?'" autocomplete="off">
+                        <button id="chatSendBtn" class="chat-send-btn">
+                            <span>ส่งคำถาม</span>
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="mt-12 text-center text-xs text-slate-500 py-6 border-t border-slate-800/60">
+                <p>การวิเคราะห์และมาตรการตัดสินใจประมวลผลตามหลักการบริหารการเงินธุรกิจ SME ร่วมกับ AI Decision Engine. ข้อมูลนี้ใช้เป็นแนวทางประกอบการตัดสินใจของผู้บริหาร</p>
+            </footer>
+        </main>
+    </div>
+
+    <script>
+    document.getElementById("logoutLink")?.addEventListener("click", async function(event) {
+        event.preventDefault();
+        try {
+            const apiBase = window.BUSINESSPILOT_API_URL || ((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") ? "http://localhost:8000" : "https://businesspilot-ai-backend.onrender.com");
+            await fetch(apiBase + "/logout", {
+                method: "POST",
+                headers: { "Authorization": "Bearer " + (localStorage.getItem("access_token") || "") }
+            });
+        } catch (_) {}
+        ["access_token", "user", "uploaded_filename", "analysis_result", "initial_cash"].forEach(k => localStorage.removeItem(k));
+        window.location.href = "login.html";
+    });
+    </script>
 </body>
 </html>

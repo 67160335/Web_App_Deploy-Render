@@ -1,49 +1,300 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-<title>BusinessPilot AI | Reports</title>
-<link rel="stylesheet" href="../assets/css/feature_pages.css">
-<link rel="stylesheet" href="../assets/css/dashboard.css">
-<script defer src="../assets/js/feature_pages.js"></script>
-<script src="../assets/js/api-config.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BusinessPilot AI | Executive Reports</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+    <!-- Google Font Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Base & Custom Styles -->
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="../assets/css/report.css">
+
+    <script src="../assets/js/api-config.js"></script>
 </head>
+
 <body data-page="report">
-<div class="app-shell">
-<aside class="sidebar">
-<div class="logo-area"><div class="logo">AI</div><div><h1>BusinessPilot</h1><p>AI Platform</p></div></div>
-<nav class="menu" aria-label="Main navigation">
-<a href="dashboard.html" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
-<a href="upload_data.html" class="menu-item"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Data</span></a>
-<a href="business_health.html" class="menu-item"><i class="fa-solid fa-heart-pulse"></i><span>Business Health</span></a>
-<a href="forecast.html" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Forecast</span></a>
-<a href="scenario.html" class="menu-item"><i class="fa-solid fa-sliders"></i><span>Scenario</span></a>
-<a href="recommendation.html" class="menu-item"><i class="fa-solid fa-robot"></i><span>AI Recommendation</span></a>
-<a href="report.html" class="menu-item"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
-<a href="notification.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
-<a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
-</nav>
-<div class="logout"><a href="login.html" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></div>
-</aside>
-<main class="main">
-<p class="eyebrow">BusinessPilot AI workspace</p>
-<h1 class="page-title">Reports</h1>
-<p class="muted">Review and export your latest analysis.</p>
-<div id="pageContent"></div>
-<p class="footer">Estimates are based on the latest analysis saved in this browser. Verify important financial decisions independently.</p>
-</main>
-</div>
-<script>
-document.getElementById("logoutLink").addEventListener("click", async function(event) {
- event.preventDefault();
- try { await fetch((window.BUSINESSPILOT_API_URL || localStorage.getItem("api_url") || "https://businesspilot-ai-backend-yf1s.onrender.com") + "/logout", {method:"POST",headers:{"Authorization":"Bearer "+(localStorage.getItem("access_token")||"")} }); } catch (_) {}
- ["access_token","user","uploaded_filename","analysis_result","initial_cash"].forEach(k=>localStorage.removeItem(k));
- window.location.href="login.html";
-});
-</script>
+    <div class="dashboard-container">
+
+        <!-- =========================================
+             SIDEBAR NAVIGATION
+        ========================================= -->
+        <aside class="sidebar">
+            <div class="logo-area">
+                <div class="logo">AI</div>
+                <div>
+                    <h1>BusinessPilot</h1>
+                    <p>AI Platform</p>
+                </div>
+            </div>
+            <nav class="menu" aria-label="Main navigation">
+                <a href="dashboard.html" class="menu-item"><i class="fa-solid fa-house"></i><span>Dashboard</span></a>
+                <a href="upload_data.html" class="menu-item"><i class="fa-solid fa-file-arrow-up"></i><span>Upload Data</span></a>
+                <a href="business_health.html" class="menu-item"><i class="fa-solid fa-heart-pulse"></i><span>Business Health</span></a>
+                <a href="forecast.html" class="menu-item"><i class="fa-solid fa-chart-line"></i><span>Forecast</span></a>
+                <a href="recommendation.html" class="menu-item"><i class="fa-solid fa-robot"></i><span>AI Recommendation</span></a>
+                <a href="report.html" class="menu-item active"><i class="fa-solid fa-file-lines"></i><span>Reports</span></a>
+                <a href="notification.html" class="menu-item"><i class="fa-solid fa-bell"></i><span>Notifications</span></a>
+                <a href="settings.html" class="menu-item"><i class="fa-solid fa-gear"></i><span>Settings</span></a>
+            </nav>
+            <div class="logout">
+                <a href="login.html" id="logoutLink"><i class="fa-solid fa-right-from-bracket"></i> Logout</a>
+            </div>
+        </aside>
+
+        <!-- =========================================
+             MAIN CONTENT AREA
+        ========================================= -->
+        <main class="main-content">
+
+            <!-- Topbar (Hidden in print) -->
+            <header class="topbar no-print">
+                <div>
+                    <div class="flex items-center gap-3">
+                        <span class="inline-block w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#06b6d4]"></span>
+                        <p class="text-xs uppercase tracking-widest text-cyan-400 font-bold">Business Intelligence Reports</p>
+                    </div>
+                    <h2 class="text-3xl font-bold mt-1">Executive Financial Report</h2>
+                    <p class="text-sm text-slate-400">รายงานสรุปสุขภาพธุรกิจ งบประมาณกระแสเงินสด และบทวิเคราะห์เชิงกลยุทธ์ฉบับสมบูรณ์</p>
+                </div>
+
+                <div class="top-actions">
+                    <div class="profile flex items-center gap-3">
+                        <div class="avatar">AI</div>
+                        <div>
+                            <h4 id="profileName" class="text-sm font-semibold">Business Owner</h4>
+                            <p class="text-xs text-slate-400">Executive</p>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- =========================================
+                 EMPTY STATE HERO
+            ========================================= -->
+            <div id="emptyReportHero" class="p-12 text-center border-2 border-dashed border-white/10 rounded-3xl bg-slate-900/40 my-6 no-print" style="display: none;">
+                <div class="max-w-md mx-auto">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center mx-auto mb-4 text-cyan-400 text-3xl">
+                        <i class="fa-solid fa-file-invoice-dollar"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-white mb-2">ยังไม่มีข้อมูลสำหรับสร้างรายงาน</h3>
+                    <p class="text-sm text-slate-400 mb-6 leading-relaxed">
+                        กรุณาอัปโหลดชุดข้อมูลการเงินจริง หรือกดทดลองใช้ข้อมูลตัวอย่างเพื่อสร้างรายงานฉบับผู้บริหารทันที
+                    </p>
+                    <div class="flex items-center justify-center gap-4 flex-wrap">
+                        <a href="upload_data.html" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-medium hover:opacity-90 transition text-sm shadow-lg shadow-cyan-500/25">
+                            <i class="fa-solid fa-file-arrow-up mr-2"></i> ไปหน้า Upload Data
+                        </a>
+                        <button id="loadSampleBtn" type="button" class="px-5 py-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 hover:bg-slate-700 transition text-sm font-medium">
+                            <i class="fa-solid fa-database mr-2 text-cyan-400"></i> ทดลองใช้ข้อมูลตัวอย่าง
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- =========================================
+                 ACTIVE REPORT VIEW
+            ========================================= -->
+            <div id="reportContent" class="mt-8">
+
+                <!-- Report Action Toolbar (Hidden in Print) -->
+                <div class="flex flex-wrap items-center justify-between gap-4 mb-6 report-actions no-print">
+                    <span class="text-xs text-slate-400 font-semibold uppercase tracking-wider">
+                        เครื่องมือจัดการรายงาน:
+                    </span>
+
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <!-- Print / PDF -->
+                        <button id="printReportBtn" class="px-4 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:opacity-90 text-white text-xs font-semibold shadow-lg shadow-cyan-500/25 transition flex items-center gap-2">
+                            <i class="fa-solid fa-print"></i> พิมพ์รายงาน / บันทึก PDF
+                        </button>
+
+                        <!-- Export CSV -->
+                        <button id="exportCsvBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-file-csv text-cyan-400"></i> ส่งออก CSV
+                        </button>
+
+                        <!-- Export JSON -->
+                        <button id="exportJsonBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-code text-purple-400"></i> ส่งออก JSON
+                        </button>
+
+                        <!-- Send Email -->
+                        <label class="text-xs text-slate-300" for="reportRecipientEmail">ส่งถึง</label>
+                        <input id="reportRecipientEmail" type="email" value="" placeholder="กรอกอีเมลผู้รับ" autocomplete="email" class="px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs w-56 focus:border-cyan-500 outline-none">
+                        <button id="emailReportBtn" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition flex items-center gap-2">
+                            <i class="fa-solid fa-envelope text-emerald-400"></i> ส่งรายงานเข้าอีเมล
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Executive Report Header Banner -->
+                <div class="report-header-banner mb-8">
+                    <div class="flex flex-wrap items-start justify-between gap-6">
+                        <div>
+                            <span class="px-3 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                                Executive Financial Report
+                            </span>
+                            <h2 id="repDatasetTitle" class="text-2xl font-bold text-white mt-3">Business Dataset</h2>
+                            <p class="text-xs text-slate-400 mt-1 flex items-center gap-4">
+                                <span><i class="fa-solid fa-hashtag mr-1"></i> <span id="repReferenceId">REF: BP-202610-001</span></span>
+                                <span><i class="fa-solid fa-calendar mr-1"></i> <span id="repGeneratedDate">--</span></span>
+                            </p>
+                        </div>
+
+                        <div class="text-right">
+                            <span id="repHealthBadge" class="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                Health Score: 0/100
+                            </span>
+                            <p class="text-[11px] text-slate-400 mt-2">ประเมินโดย AI Engine ความแม่นยำสูง</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 1: Financial Snapshot Grid (6 Tiles) -->
+                <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+                    <div class="report-metric-tile">
+                        <span class="text-xs text-slate-400 block mb-1">รายรับรวม</span>
+                        <strong id="repTotalRevenue" class="text-lg font-bold text-cyan-400">฿0</strong>
+                    </div>
+
+                    <div class="report-metric-tile">
+                        <span class="text-xs text-slate-400 block mb-1">ค่าใช้จ่ายรวม</span>
+                        <strong id="repTotalExpense" class="text-lg font-bold text-rose-400">฿0</strong>
+                    </div>
+
+                    <div class="report-metric-tile">
+                        <span class="text-xs text-slate-400 block mb-1">กำไร/ขาดทุนสุทธิ</span>
+                        <strong id="repNetProfit" class="text-lg font-bold text-emerald-400">฿0</strong>
+                    </div>
+
+                    <div class="report-metric-tile">
+                        <span class="text-xs text-slate-400 block mb-1">อัตรากำไรสุทธิ</span>
+                        <strong id="repProfitMargin" class="text-lg font-bold text-white">0%</strong>
+                    </div>
+
+                    <div class="report-metric-tile">
+                        <span class="text-xs text-slate-400 block mb-1">อัตราเผาเงินสด</span>
+                        <strong id="repBurnRate" class="text-lg font-bold text-amber-400">฿0</strong>
+                    </div>
+
+                    <div class="report-metric-tile">
+                        <span class="text-xs text-slate-400 block mb-1">ระยะเวลาเงินสด</span>
+                        <strong id="repRunway" class="text-lg font-bold text-purple-400">--</strong>
+                    </div>
+                </div>
+
+                <!-- Section 2: Key Financial Ratios -->
+                <div class="glass-report p-6 mb-8">
+                    <h3 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-chart-pie text-cyan-400"></i> อัตราส่วนและดัชนีประสิทธิภาพทางการเงิน (Financial Key Ratios)
+                    </h3>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Operating Ratio -->
+                        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                            <div class="flex justify-between items-center text-xs mb-1">
+                                <span class="text-slate-300 font-medium">สัดส่วนค่าใช้จ่ายต่อรายรับ (Operating Ratio):</span>
+                                <strong id="repOpexRatio" class="text-white">0%</strong>
+                            </div>
+                            <div class="ratio-bar-wrap">
+                                <div id="repOpexRatioBar" class="ratio-bar-fill bg-cyan-400" style="width: 50%;"></div>
+                            </div>
+                            <span class="text-[10px] text-slate-500 mt-2 block">เกณฑ์มาตรฐาน SME: ต่ำกว่า 80-85% ถือว่าปลอดภัย</span>
+                        </div>
+
+                        <!-- Revenue Growth Trend -->
+                        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">แนวโน้มการเติบโตของรายได้ (Revenue Trend):</span>
+                            <strong id="repRevGrowth" class="text-xl font-bold text-cyan-400">0%</strong>
+                            <p class="text-[10px] text-slate-500 mt-1">เปรียบเทียบจากช่วงเริ่มต้นจนถึงช่วงล่าสุด</p>
+                        </div>
+
+                        <!-- Expense Growth Trend -->
+                        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800">
+                            <span class="text-xs text-slate-400 block mb-1">แนวโน้มการเพิ่มขึ้นของค่าใช้จ่าย (Expense Trend):</span>
+                            <strong id="repExpGrowth" class="text-xl font-bold text-rose-400">0%</strong>
+                            <p class="text-[10px] text-slate-500 mt-1">เปรียบเทียบจากช่วงเริ่มต้นจนถึงช่วงล่าสุด</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Monthly Breakdown Table -->
+                <div class="glass-report p-6 mb-8">
+                    <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-table text-cyan-400"></i> รายงานผลประกอบการรายเดือน (Monthly Audit Table)
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-4">แสดงรายรับ รายจ่าย กำไรสุทธิ และยอดกระแสเงินสดสะสมในแต่ละเดือน</p>
+
+                    <div class="overflow-x-auto">
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th>เดือน (Month)</th>
+                                    <th>รายรับ (Revenue)</th>
+                                    <th>ค่าใช้จ่าย (Expenses)</th>
+                                    <th>กำไร/ขาดทุนสุทธิ (Net Profit)</th>
+                                    <th>อัตรากำไร (%)</th>
+                                    <th>เงินสดสะสม (Cash Balance)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="repTableBody">
+                                <!-- Populated dynamically -->
+                            </tbody>
+                            <tfoot id="repTableFoot">
+                                <!-- Populated dynamically -->
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Section 4: AI Strategic Action Plan -->
+                <div class="glass-report p-6 mb-8">
+                    <h3 class="text-base font-bold text-white mb-2 flex items-center gap-2">
+                        <i class="fa-solid fa-robot text-cyan-400"></i> แผนปฏิบัติการและข้อเสนอแนะเชิงกลยุทธ์จาก AI (Strategic Action Plan)
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-4">สรุปมาตรการเร่งด่วนและคำแนะนำที่ควรดำเนินการตามลำดับความสำคัญ</p>
+
+                    <ul id="repRecommendationsList" class="space-y-3">
+                        <!-- Populated dynamically -->
+                    </ul>
+                </div>
+
+                <!-- Section 5: Report Certification & Sign-off -->
+                <div class="p-6 rounded-2xl bg-slate-900/80 border border-slate-800 flex flex-wrap items-center justify-between gap-6 text-xs text-slate-400">
+                    <div>
+                        <strong class="text-white block mb-1">รับรองความถูกต้องโดยระบบ BusinessPilot AI</strong>
+                        <p>รายงานนี้จัดทำขึ้นโดยอัลกอริทึมการวิเคราะห์ทางการเงินสำหรับผู้บริหารและผู้ถือหุ้น</p>
+                    </div>
+
+                    <div class="text-right">
+                        <span class="inline-block px-3 py-1 rounded bg-slate-800 text-slate-300 font-mono text-[11px] border border-slate-700">
+                            DIGITALLY GENERATED REPORT
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Footer -->
+            <p class="footer mt-8 text-xs text-slate-500 no-print">
+                รายงานทางการเงินนี้สร้างขึ้นจากชุดข้อมูลที่ผู้ใช้อัปโหลด กรุณาตรวจสอบเอกสารบัญชีจริงประกอบการตัดสินใจทางการเงิน
+            </p>
+
+        </main>
+    </div>
+
+    <!-- Report Controller -->
+    <script src="../assets/js/report.js"></script>
 </body>
+
 </html>

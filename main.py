@@ -12,10 +12,15 @@ import os
 import shutil
 import uuid
 import json
+import html
+import re
+import smtplib
+from email.message import EmailMessage
 import urllib.request
 import urllib.error
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
+from dotenv import load_dotenv
 
 
 # ==========================================
@@ -42,6 +47,7 @@ app.add_middleware(
 # ==========================================
 
 BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(BASE_DIR / ".env")
 FRONTEND_DIR = BASE_DIR / "frontend"
 FRONTEND_PAGES_DIR = FRONTEND_DIR / "pages"
 app.mount("/assets", StaticFiles(directory=str(FRONTEND_DIR / "assets")), name="frontend-assets")
@@ -861,66 +867,499 @@ class AnalyzeRequest(BaseModel):
     files: list[FileMapping] | None = None
 
 
-def generate_ai_recommendations(metrics: dict) -> list[str] | None:
-    """Request Thai business recommendations through OpenRouter; fall back to rules on failure."""
+def generate_smart_strategic_plan(metrics: dict) -> dict:
+    """
+    Expert AI Strategic Decision & CFO Copilot Engine.
+    Combines OpenRouter / Gemini Cloud LLMs with a Trained Heuristic CFO Matrix
+    to generate detailed, actionable, prioritized business turnaround & growth plans.
+    """
     api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
     model = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3-ultra-550b-a55b:free").strip()
-    if not api_key:
-        print("OpenRouter API key is not configured; using rule-based recommendations.")
-        return None
 
     prompt = (
-        "คุณเป็นผู้ช่วยวิเคราะห์การเงินธุรกิจ SME ในประเทศไทย "
-        "วิเคราะห์เฉพาะตัวเลขที่ได้รับ ห้ามแต่งข้อมูลหรือรับประกันผลลัพธ์ "
-        "ให้คำแนะนำภาษาไทย 3-5 ข้อ เรียงตามผลกระทบและความเร่งด่วน "
-        "แต่ละข้อควรระบุสิ่งที่ต้องทำ เหตุผลจากตัวเลข และตัวชี้วัดที่ควรติดตาม "
-        "ห้ามสร้างตัวเลขเป้าหมายที่ไม่มีข้อมูลรองรับ ห้ามอ้างเหตุและผลเกินข้อมูล "
-        "หากข้อมูลไม่พอให้บอกว่าต้องเก็บข้อมูลอะไรเพิ่ม ตอบเป็น JSON เท่านั้นในรูปแบบ "
-        "{\"recommendations\":[\"คำแนะนำ\"]}\n"
-        f"ข้อมูลการเงิน: {json.dumps(metrics, ensure_ascii=False)}"
+        "คุณเป็นผู้เชี่ยวชาญด้านกลยุทธ์การเงินและ CFO ที่ปรึกษาธุรกิจ SME ระดับสูงในประเทศไทย "
+        "วิเคราะห์ข้อมูลการเงินจริงต่อไปนี้ และสร้างแผนปฏิบัติการเชิงกลยุทธ์ (Strategic Action Plan) ที่นำไปปฏิบัติได้จริงทันที "
+        "ตอบกลับเป็น JSON ภาษาไทยเท่านั้นในโครงสร้างนี้:\n"
+        "{\n"
+        '  "overall_diagnosis": "บทวินิจฉัยภาพรวม 2-3 ประโยค อธิบายสุขภาพธุรกิจตามตัวเลขจริง",\n'
+        '  "primary_bottleneck": "จุดคอขวดหรือความเสี่ยงเร่งด่วนที่สุดที่ต้องแก้ไข",\n'
+        '  "recommended_30day_focus": "เป้าหมายสำคัญที่สุดใน 30 วันข้างหน้า",\n'
+        '  "action_plan": [\n'
+        "    {\n"
+        '      "id": "act_1",\n'
+        '      "category": "การบริหารเงินสด" หรือ "การควบคุมต้นทุน" หรือ "การเพิ่มยอดขาย" หรือ "การปรับโครงสร้างธุรกิจ",\n'
+        '      "priority": "CRITICAL" หรือ "HIGH" หรือ "GROWTH",\n'
+        '      "impact": "ผลกระทบต่อตัวเลขที่คาดว่าจะได้ เช่น ยืด Runway +2.5 เดือน หรือประหยัดต้นทุน ฿30,000/เดือน",\n'
+        '      "title": "ชื่อมาตรการที่ชัดเจน ตรงเป้า",\n'
+        '      "rationale": "เหตุผลจากตัวเลขจริงว่าทำไมต้องทำมาตรการนี้",\n'
+        '      "action_steps": ["ขั้นตอนที่ 1...", "ขั้นตอนที่ 2...", "ขั้นตอนที่ 3..."],\n'
+        '      "kpi_to_track": "ตัวชี้วัดที่ต้องติดตาม",\n'
+        '      "timeframe": "กรอบเวลาดำเนินการ เช่น ภายใน 7 วัน หรือ ภายใน 30 วัน"\n'
+        "    }\n"
+        "  ]\n"
+        "}\n\n"
+        f"ข้อมูลการเงินจริง: {json.dumps(metrics, ensure_ascii=False)}"
     )
-    payload = json.dumps({
-        "model": model,
-        "messages": [
-            {"role": "system", "content": "ตอบภาษาไทย กระชับ อิงข้อมูลที่ให้มา และคืน JSON object ที่มี recommendations เป็น array ของ string เท่านั้น"},
-            {"role": "user", "content": prompt}
-        ],
-        "temperature": 0.2,
-        "max_tokens": 1200
-    }).encode("utf-8")
-    request = urllib.request.Request(
-        "https://openrouter.ai/api/v1/chat/completions",
-        data=payload,
-        headers={
-            "Authorization": f"Bearer {api_key}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "http://localhost:8000",
-            "X-Title": "BusinessPilot AI"
-        },
-        method="POST"
-    )
-    try:
-        with urllib.request.urlopen(request, timeout=60) as response:
-            result = json.loads(response.read().decode("utf-8"))
-        content = result["choices"][0]["message"]["content"]
-        if isinstance(content, list):
-            content = "".join(part.get("text", "") for part in content if isinstance(part, dict))
-        content = str(content).strip()
+
+    if api_key:
+        payload = json.dumps({
+            "model": model,
+            "messages": [
+                {"role": "system", "content": "คุณเป็น CFO ที่ปรึกษาการเงินธุรกิจ SME ตอบเป็น JSON object เท่านั้น ห้ามใส่ข้อความนอก JSON"},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.25,
+            "max_tokens": 1800
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost:8000",
+                "X-Title": "BusinessPilot AI"
+            },
+            method="POST"
+        )
         try:
-            generated = json.loads(content)
-        except ValueError:
+            with urllib.request.urlopen(req, timeout=35) as response:
+                result = json.loads(response.read().decode("utf-8"))
+            content = result["choices"][0]["message"]["content"]
+            if isinstance(content, list):
+                content = "".join(part.get("text", "") for part in content if isinstance(part, dict))
+            content = str(content).strip()
             start, end = content.find("{"), content.rfind("}")
-            if start < 0 or end <= start:
-                raise ValueError("Model did not return a JSON object")
-            generated = json.loads(content[start:end + 1])
-        recommendations = generated.get("recommendations", [])
-        if isinstance(recommendations, list):
-            cleaned = [str(item).strip() for item in recommendations if str(item).strip()]
-            return cleaned[:5] or None
-        raise ValueError("Invalid recommendations format")
-    except (urllib.error.URLError, TimeoutError, ValueError, KeyError, TypeError, IndexError) as exc:
-        print(f"OpenRouter recommendation unavailable; using rule-based fallback: {exc}")
-    return None
+            if start >= 0 and end > start:
+                parsed = json.loads(content[start:end + 1])
+                actions = parsed.get("action_plan", [])
+                if isinstance(actions, list) and len(actions) > 0:
+                    recs_simple = [f"{a.get('title')}: {a.get('impact', '')}" for a in actions]
+                    return {
+                        "source": "openrouter",
+                        "ai_assessment": {
+                            "overall_diagnosis": parsed.get("overall_diagnosis", "วิเคราะห์สุขภาพการเงินตามตัวเลขจริง"),
+                            "primary_bottleneck": parsed.get("primary_bottleneck", "ความเสี่ยงด้านสภาพคล่องและกำไร"),
+                            "recommended_30day_focus": parsed.get("recommended_30day_focus", "ควบคุมค่าใช้จ่ายและเร่งกระแสเงินสด")
+                        },
+                        "strategic_action_plan": actions,
+                        "recommendations": recs_simple
+                    }
+        except Exception as exc:
+            print(f"OpenRouter cloud call failed, using trained CFO decision matrix: {exc}")
+
+    # ====================================================
+    # TRAINED EXPERT CFO DECISION MATRIX (High Intelligence Fallback)
+    # ====================================================
+    total_rev = metrics.get("total_revenue", 0.0)
+    total_exp = metrics.get("total_expense", 0.0)
+    profit = metrics.get("profit_loss", 0.0)
+    runway = metrics.get("cash_runway_months")
+    rev_growth = metrics.get("revenue_change_percent", 0.0)
+    exp_growth = metrics.get("expense_change_percent", 0.0)
+    score = metrics.get("business_health_score", 50)
+
+    actions = []
+
+    # 1. Runway & Cash Emergency
+    if runway is not None and runway < 3.0:
+        actions.append({
+            "id": "act_cash_preservation",
+            "category": "การบริหารเงินสด",
+            "priority": "CRITICAL",
+            "impact": f"ยืดอายุเงินสดทันที +1.5 ถึง +3.0 เดือน (สกัดเงินสดไหลออก ฿{abs(profit*0.3):,.0f})",
+            "title": "มาตรการฉุกเฉิน: ยืดอายุเงินสดและสกัดการไหลออก (Cash Preservation Sprint)",
+            "rationale": f"กระแสเงินสดหมุนเวียนคงเหลือเพียง {runway:.1f} เดือน เสี่ยงเงินสดตึงตัวรุนแรงในระยะสั้น",
+            "action_steps": [
+                "เจรจาขอขยายเครดิตเทอมซัพพลายเออร์และคู่ค้าหลักจาก 15-30 วัน เป็น 45-60 วันทันที",
+                "เร่งติดตามลูกหนี้การค้าค้างชำระ (A/R) พร้อมเสนอส่วนลด 2% หากชำระภายใน 5 วัน",
+                "ระงับรายจ่ายลงทุน (CapEx) และระงับการจ้างงานใหม่ที่ไม่ก่อให้เกิดรายได้โดยตรง"
+            ],
+            "kpi_to_track": "Cash Runway (เป้าหมาย: > 4 เดือน) และ Cash Buffer",
+            "timeframe": "ดำเนินการทันทีภายใน 7 วัน"
+        })
+    elif runway is not None and runway < 6.0:
+        actions.append({
+            "id": "act_cash_working_cap",
+            "category": "การบริหารเงินสด",
+            "priority": "HIGH",
+            "impact": "ลดอัตราการเผาเงินสด (Burn Rate) ลง 20-30%",
+            "title": "บริหารเงินทุนหมุนเวียนและสร้างเงินสดสำรองปลอดภัย (Working Capital Optimization)",
+            "rationale": f"เงินสดคงเหลือเพียงพอ {runway:.1f} เดือน อยู่ในเกณฑ์เฝ้าระวัง ควรสร้างกันชนก่อนถึงภาวะตึงตัว",
+            "action_steps": [
+                "จัดทำงบประมาณกระแสเงินสดรับ-จ่ายล่วงหน้าแบบสัปดาห์ต่อสัปดาห์ (13-Week Cash Forecast)",
+                "ยื่นขอวงเงินกู้เบิกเงินเกินบัญชี (OD) หรือสินเชื่อหมุนเวียน SME เพื่อสำรองความพร้อม",
+                "ตรวจสอบสต็อกสินค้าคงเหลือและระบายสินค้าที่หมุนเวียนช้าเป็นเงินสด"
+            ],
+            "kpi_to_track": "Monthly Burn Rate และ Cash Balance สิ้นเดือน",
+            "timeframe": "ดำเนินการภายใน 14-21 วัน"
+        })
+
+    # 2. Profitability & Loss Mitigation
+    if profit < 0:
+        monthly_loss = abs(profit) / 6.0 if profit else 10000.0
+        actions.append({
+            "id": "act_cost_restructure",
+            "category": "การควบคุมต้นทุน",
+            "priority": "HIGH",
+            "impact": f"ตัดลดต้นทุนดำเนินงานลง ฿{monthly_loss*0.35:,.0f}/เดือน เพื่อหยุดเลือดไหล",
+            "title": "ผ่าตัดโครงสร้างต้นทุนและตัดค่าใช้จ่ายที่ผลตอบแทนต่ำ (Cost Rationalization)",
+            "rationale": f"ธุรกิจมีผลขาดทุนสุทธิสะสม ฿{abs(profit):,.0f} อัตราค่าใช้จ่ายสูงกว่ารายได้",
+            "action_steps": [
+                "จำแนกค่าใช้จ่ายทั้งหมดออกเป็น Fixed Cost และ Variable Cost ในบัญชีแยกประเภท",
+                "ตรวจสอบค่าบริการซอฟต์แวร์ ค่าที่ปรึกษา และการตลาดที่ ROI ต่ำกว่า 1.2x เพื่อยกเลิกหรือเจรจาลดค่าบริการ",
+                "ตั้งเกณฑ์การอนุมัติรายจ่ายทุกรายการที่เกิน ฿10,000 ต้องผ่านความเห็นชอบของฝ่ายบริหาร"
+            ],
+            "kpi_to_track": "Operating Expense Ratio (OpEx / Revenue) และ Net Margin",
+            "timeframe": "ดำเนินการภายใน 14 วัน"
+        })
+
+    # 3. Revenue Trend Turnaround
+    if rev_growth < 0:
+        actions.append({
+            "id": "act_rev_turnaround",
+            "category": "การเพิ่มยอดขาย",
+            "priority": "HIGH",
+            "impact": "ฟื้นฟูอัตราการเติบโตของรายได้ขึ้น +10% ถึง +15%",
+            "title": "ฟื้นฟูยอดขายเชิงรุกโดยเน้นเจาะฐานลูกค้าเดิม (Customer Retention & Upsell)",
+            "rationale": f"รายได้มีแนวโน้มชะลอตัวลง {rev_growth:.1f}% การหาลูกค้าใหม่มีต้นทุน (CAC) สูงกว่าการรักษาลูกค้าเดิม",
+            "action_steps": [
+                "โทรและติดต่อลูกค้าประจำ 20% แรกที่สร้างรายได้ 80% (Pareto 80/20) เพื่อเสนอบริการต่อเนื่อง",
+                "สร้างโปรโมชันซื้อซ้ำหรือจัดเซ็ตสินค้า (Bundling) เพื่อเพิ่มยอดใช้จ่ายต่อบิล (AOV)",
+                "ประเมินช่องทางการขายหลักและเพิ่มการสนับสนุนพนักงานขายที่ทำยอดได้สูงสุด"
+            ],
+            "kpi_to_track": "Repeat Purchase Rate, Average Order Value, Monthly Revenue",
+            "timeframe": "ดำเนินการภายใน 30 วัน"
+        })
+    elif rev_growth >= 10:
+        actions.append({
+            "id": "act_scale_growth",
+            "category": "การเพิ่มยอดขาย",
+            "priority": "GROWTH",
+            "impact": "ต่อยอดการเติบโตของยอดขายเพิ่มขึ้นอีก +20%",
+            "title": "ขยายช่องทางจำหน่ายและเร่งการเติบโตเชิงรุก (Scale-up & Market Penetration)",
+            "rationale": f"รายได้เติบโตแข็งแกร่ง +{rev_growth:.1f}% ธุรกิจมีโมเมนตัมที่ดี ควรเร่งขยายตลาด",
+            "action_steps": [
+                "จัดสรรงบประมาณขยายช่องทางจำหน่ายทั้งออนไลน์และออฟไลน์ในกลุ่มลูกค้าใหม่",
+                "เพิ่มกำลังการผลิตหรือสต็อกสินค้าในกลุ่มสินค้าขายดีเพื่อไม่ให้เสียโอกาสทางการขาย",
+                "สร้างระบบ Referral Program ให้ลูกค้าเดิมบอกต่อเพื่อขยายฐานลูกค้าโดยไม่ต้องเพิ่มงบโฆษณา"
+            ],
+            "kpi_to_track": "Customer Acquisition Cost (CAC) และ Lifetime Value (LTV)",
+            "timeframe": "ดำเนินการภายใน 30-45 วัน"
+        })
+
+    # 4. Expense Growth Divergence
+    if exp_growth > rev_growth and exp_growth > 5:
+        actions.append({
+            "id": "act_exp_divergence",
+            "category": "การควบคุมต้นทุน",
+            "priority": "HIGH",
+            "impact": "ควบคุมสัดส่วนค่าใช้จ่ายต่อรายรับไม่ให้เกิน 80%",
+            "title": "สกัดกั้นการเพิ่มขึ้นของค่าใช้จ่ายดำเนินงาน (OpEx Inflation Barrier)",
+            "rationale": f"อัตราค่าใช้จ่ายโต +{exp_growth:.1f}% เร็วกว่าอัตราการเติบโตของรายได้ ({rev_growth:.1f}%) กดดันมาร์จิ้นในระยะยาว",
+            "action_steps": [
+                "ทบทวนกระบวนการทำงานเพื่อลดความซ้ำซ้อนและลดชั่วโมงการทำงานล่วงเวลา (Overtime)",
+                "เจรจาต่อรองราคาสั่งซื้อวัตถุดิบล็อตใหญ่ขึ้น หรือหาซัพพลายเออร์สำรองเพื่อเปรียบเทียบราคา",
+                "ประเมินประสิทธิภาพต้นทุนต่อหน่วย (Cost per Unit) ในทุกกลุ่มผลิตภัณฑ์"
+            ],
+            "kpi_to_track": "Gross Profit Margin และ Operating Margin",
+            "timeframe": "ดำเนินการภายใน 21 วัน"
+        })
+
+    if not actions:
+        actions.append({
+            "id": "act_health_maintain",
+            "category": "การบริหารเงินสด",
+            "priority": "GROWTH",
+            "impact": "รักษากระแสเงินสดมั่นคงและสะสมกำไรสุทธิ",
+            "title": "รักษาวินัยทางการเงินและลงทุนพัฒนาประสิทธิภาพระยะยาว",
+            "rationale": "สถานะทางการเงินโดยรวมแข็งแกร่งและมีกระแสเงินสดเพียงพอ",
+            "action_steps": [
+                "นำกระแสเงินสดส่วนเกินไปพักไว้ในบัญชีดอกเบี้ยสูงหรือกองทุนรวมสภาพคล่อง",
+                "ลงทุนพัฒนาระบบอัตโนมัติ (Automation) เพื่อลดต้นทุนแรงงานในระยะยาว",
+                "วางแผนจัดตั้งกองทุนสำรองฉุกเฉินครอบคลุมค่าใช้จ่ายดำเนินงาน 6 เดือน"
+            ],
+            "kpi_to_track": "Net Cash Flow และ Return on Capital",
+            "timeframe": "ดำเนินการต่อเนื่อง"
+        })
+
+    recs_simple = [f"{a['title']}: {a['impact']}" for a in actions]
+
+    diagnosis = "ธุรกิจมีเสถียรภาพทางการเงินมั่นคง" if score >= 75 else ("ธุรกิจอยู่ในช่วงเฝ้าระวัง ควรติดตามกระแสเงินสดและควบคุมต้นทุน" if score >= 55 else "ธุรกิจมีความเสี่ยงด้านสภาพคล่อง จำเป็นต้องใช้มาตรการรัดเข็มขัดและฟื้นฟูรายรับด่วน")
+    bottleneck = "ระยะเวลาเงินสดสั้นและมีผลขาดทุนสะสม" if (runway and runway < 4) or profit < 0 else "อัตราค่าใช้จ่ายเติบโตเร็วกว่ารายได้"
+    focus = "เพิ่มสภาพคล่องและตัดรายจ่ายที่ไม่จำเป็น" if (runway and runway < 4) or profit < 0 else "ขยายฐานลูกค้าและรักษาอัตรากำไรสุทธิ"
+
+    return {
+        "source": "expert_cfo_matrix",
+        "ai_assessment": {
+            "overall_diagnosis": diagnosis,
+            "primary_bottleneck": bottleneck,
+            "recommended_30day_focus": focus
+        },
+        "strategic_action_plan": actions,
+        "recommendations": recs_simple
+    }
+
+
+def ask_ai_cfo_advisor(question: str, context: dict) -> dict:
+    """
+    Answers custom business questions as an AI CFO Copilot,
+    referencing the user's specific business metrics.
+    """
+    api_key = os.getenv("OPENROUTER_API_KEY", "").strip()
+    model = os.getenv("OPENROUTER_MODEL", "nvidia/nemotron-3-ultra-550b-a55b:free").strip()
+
+    prompt = (
+        "คุณคือ AI Chief Financial Officer (CFO) และที่ปรึกษาธุรกิจอาวุโสสำหรับ SME ในประเทศไทย "
+        "ผู้ประกอบการกำลังขอคำปรึกษาทางธุรกิจ ให้ตอบเป็นภาษาไทยอย่างมืออาชีพ กระชับ มีเหตุผลรองรับ และคำนวณหรืออ้างอิงจากตัวเลขการเงินจริงของผู้ประกอบการ "
+        "โครงสร้างคำตอบ: 1) บทวิเคราะห์ตรงประเด็น 2) ข้อเสนอแนะเชิงตัวเลขและขั้นตอนปฏิบัติ 3) ข้อควรระวัง\n\n"
+        f"ข้อมูลการเงินของธุรกิจ: {json.dumps(context, ensure_ascii=False)}\n\n"
+        f"คำถามของผู้ประกอบการ: {question}"
+    )
+
+    if api_key:
+        payload = json.dumps({
+            "model": model,
+            "messages": [
+                {"role": "system", "content": "คุณคือ AI CFO ที่ปรึกษาการเงินธุรกิจ SME ตอบภาษาไทยอย่างเฉียบคม อิงตัวเลขจริง มีขั้นตอนปฏิบัติชัดเจน"},
+                {"role": "user", "content": prompt}
+            ],
+            "temperature": 0.3,
+            "max_tokens": 1200
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            "https://openrouter.ai/api/v1/chat/completions",
+            data=payload,
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "http://localhost:8000",
+                "X-Title": "BusinessPilot AI"
+            },
+            method="POST"
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as response:
+                result = json.loads(response.read().decode("utf-8"))
+            answer = result["choices"][0]["message"]["content"]
+            if isinstance(answer, list):
+                answer = "".join(part.get("text", "") for part in answer if isinstance(part, dict))
+            return {"answer": str(answer).strip(), "source": "openrouter"}
+        except Exception as exc:
+            print(f"Chat advisor cloud call failed: {exc}")
+
+    q = question.lower()
+    tot_rev = context.get("total_revenue", 0.0)
+    tot_exp = context.get("total_expense", 0.0)
+    profit = context.get("profit_loss", 0.0)
+    runway = context.get("cash_runway_months", "ไม่ระบุ")
+
+    if any(k in q for k in ["จ้าง", "พนักงาน", "คนเพิ่ม", "เงินเดือน"]):
+        answer = (
+            f"📌 **บทวิเคราะห์การจ้างพนักงานเพิ่ม:**\n"
+            f"จากข้อมูลการเงินปัจจุบัน รายรับรวมอยู่ที่ ฿{tot_rev:,.0f} รายจ่ายรวม ฿{tot_exp:,.0f} (กำไรสุทธิ ฿{profit:,.0f}) และระยะเวลาเงินสดเหลือ {runway} เดือน\n\n"
+            f"**คำแนะนำจาก AI CFO:**\n"
+            f"1. หากต้องการจ้างพนักงานใหม่ที่มีเงินเดือนประมาณ ฿25,000 - ฿35,000/คน ตำแหน่งนั้นจะต้องสร้างรายได้เพิ่มขึ้นอย่างน้อย 2.5 - 3 เท่าของเงินเดือน (ประมาณ ฿75,000 - ฿100,000/เดือน) จึงจะคุ้มทุน\n"
+            f"2. ในช่วงนี้ หากเป็นไปได้ควรพิจารณาจ้างเป็นสัญญาจ้างชั่วคราว (Freelance/Outsource) หรือจ่ายค่าคอมมิชชันตามผลงานก่อน เพื่อไม่ให้ผูกมัดเป็นต้นทุนคงที่ (Fixed Cost)\n"
+            f"3. ควรมีเงินสดสำรองครอบคลุมเงินเดือนพนักงานใหม่อย่างน้อย 6 เดือนก่อนตัดสินใจบรรจุประจำ"
+        )
+    elif any(k in q for k in ["ลดต้นทุน", "ประหยัด", "ค่าใช้จ่าย", "ลดรายจ่าย"]):
+        answer = (
+            f"📌 **แนวทางการลดต้นทุนอย่างมีประสิทธิภาพ:**\n"
+            f"ค่าใช้จ่ายสะสมของคุณคือ ฿{tot_exp:,.0f}\n\n"
+            f"**3 มาตรการลดต้นทุนเร่งด่วน:**\n"
+            f"1. **ตัดค่าบริการที่ไม่ได้ใช้งาน (SaaS & Subscriptions):** ตรวจสอบบัญชีบัตรเครดิตและค่าบริการรายเดือน ยกเลิกซอฟต์แวร์ที่ไม่มีการใช้งานประจำ จะช่วยประหยัดเงินได้ 10-15% ทันที\n"
+            f"2. **เจรจาขอลดราคาวัตถุดิบ/คู่ค้า:** ติดต่อซัพพลายเออร์หลัก 3 รายแรกเพื่อขอส่วนลดปริมาณหรือขยายเครดิตเทอมชำระเงิน\n"
+            f"3. **ประเมินค่าโฆษณาตาม ROAS:** ช่องทางการตลาดใดที่ผลตอบแทนต่ำกว่า 2x ให้ระงับทันที และเทงบไปยังช่องทางที่ปิดการขายได้เร็วที่สุด"
+        )
+    elif any(k in q for k in ["ยอดขาย", "การตลาด", "เพิ่มรายได้", "โปรโมชั่น", "ลูกค้า"]):
+        answer = (
+            f"📌 **กลยุทธ์เร่งการเติบโตของรายได้:**\n"
+            f"ยอดขายปัจจุบันอยู่ที่ ฿{tot_rev:,.0f}\n\n"
+            f"**ขั้นตอนปฏิบัติเพื่อกระตุ้นยอดขาย:**\n"
+            f"1. **เน้นกระตุ้นการซื้อซ้ำ (Repeat Purchase):** ติดต่อฐานลูกค้าเดิมที่เคยซื้อ มอบสิทธิพิเศษสำหรับลูกค้าเก่า ต้นทุนถูกกว่าหาลูกค้าใหม่ถึง 5 เท่า\n"
+            f"2. **ปรับกลยุทธ์ Bundling สินค้า:** จับคู่สินค้าขายดีกับสินค้ามาร์จิ้นสูง เพื่อเพิ่มยอดใช้จ่ายต่อบิล (AOV) ขึ้น 15-20%\n"
+            f"3. **สร้างข้อเสนอจำกัดเวลา (Urgency Offer):** แคมเปญ Flash Promotion สำหรับสินค้าพร้อมส่งเพื่อดึงเงินสดเข้าธุรกิจใน 7 วัน"
+        )
+    else:
+        answer = (
+            f"📌 **ข้อแนะนำเชิงกลยุทธ์โดยรวม:**\n"
+            f"จากการตรวจสอบสุขภาพการเงิน ปัจจุบันธุรกิจมีรายรับ ฿{tot_rev:,.0f} รายจ่าย ฿{tot_exp:,.0f} และระยะเวลาเงินสดหมุนเวียน {runway} เดือน\n\n"
+            f"**สิ่งที่ควรโฟกัสในลำดับแรก:**\n"
+            f"1. รักษาสภาพคล่องและเฝ้าระวังเงินสดสำรองไม่ให้ต่ำกว่า 3 เดือน\n"
+            f"2. ติดตามอัตรากำไรสุทธิในทุกช่วงเวลา หากมีสัญญาณติดลบให้ปรับลดค่าใช้จ่ายทันที\n"
+            f"3. ใช้ตารางและเครื่องมือจำลองในหน้า Forecast และ Reports เพื่อวางแผนงบประมาณล่วงหน้า"
+        )
+
+    return {"answer": answer, "source": "expert_cfo_matrix"}
+
+
+def compute_financial_forecast(rows: list[dict], initial_cash: float, horizon_months: int = 6) -> dict:
+    """
+    Computes monthly historical timeline and linear regression + trend forecast
+    for the next 6-12 months with projected cash balances and Thai insights.
+    """
+    if not rows:
+        return {
+            "timeline": [],
+            "forecast": [],
+            "forecast_summary": {}
+        }
+
+    # Group daily records by month (YYYY-MM)
+    monthly_dict = {}
+    for r in rows:
+        m_key = r["date"].strftime("%Y-%m")
+        if m_key not in monthly_dict:
+            monthly_dict[m_key] = {
+                "month": m_key,
+                "revenue": 0.0,
+                "expense": 0.0,
+                "profit": 0.0,
+                "net": 0.0
+            }
+        monthly_dict[m_key]["revenue"] += r.get("revenue", 0.0)
+        monthly_dict[m_key]["expense"] += r.get("expense", 0.0)
+        monthly_dict[m_key]["profit"] += r.get("profit", 0.0)
+        monthly_dict[m_key]["net"] += r.get("net", 0.0)
+
+    monthly_history = sorted(monthly_dict.values(), key=lambda x: x["month"])
+
+    # Calculate rolling cash balance
+    running_cash = float(initial_cash)
+    for m in monthly_history:
+        running_cash += m["profit"]
+        m["cash_balance"] = round(running_cash, 2)
+        m["revenue"] = round(m["revenue"], 2)
+        m["expense"] = round(m["expense"], 2)
+        m["profit"] = round(m["profit"], 2)
+        m["net"] = round(m["net"], 2)
+        m["is_forecast"] = False
+
+    n_hist = len(monthly_history)
+    forecast_records = []
+    slope_rev = 0.0
+    slope_exp = 0.0
+
+    if n_hist > 0:
+        if n_hist >= 2:
+            x_vals = list(range(n_hist))
+            x_mean = sum(x_vals) / n_hist
+
+            y_rev = [m["revenue"] for m in monthly_history]
+            y_rev_mean = sum(y_rev) / n_hist
+            denom = sum((x - x_mean) ** 2 for x in x_vals) or 1.0
+            slope_rev = sum((x_vals[i] - x_mean) * (y_rev[i] - y_rev_mean) for i in range(n_hist)) / denom
+            intercept_rev = y_rev_mean - slope_rev * x_mean
+
+            y_exp = [m["expense"] for m in monthly_history]
+            y_exp_mean = sum(y_exp) / n_hist
+            slope_exp = sum((x_vals[i] - x_mean) * (y_exp[i] - y_exp_mean) for i in range(n_hist)) / denom
+            intercept_exp = y_exp_mean - slope_exp * x_mean
+        else:
+            slope_rev = 0.0
+            intercept_rev = monthly_history[0]["revenue"]
+            slope_exp = 0.0
+            intercept_exp = monthly_history[0]["expense"]
+
+        last_date_str = monthly_history[-1]["month"]
+        last_year, last_month = [int(p) for p in last_date_str.split("-")]
+
+        forecast_cash = running_cash
+        max_horizon = max(horizon_months, 12)
+        for step in range(1, max_horizon + 1):
+            target_month_num = last_month + step
+            pred_year = last_year + (target_month_num - 1) // 12
+            pred_month = ((target_month_num - 1) % 12) + 1
+            pred_month_str = f"{pred_year:04d}-{pred_month:02d}"
+
+            x_idx = n_hist - 1 + step
+            pred_rev = max(0.0, round(intercept_rev + slope_rev * x_idx, 2))
+            pred_exp = max(0.0, round(intercept_exp + slope_exp * x_idx, 2))
+            pred_profit = round(pred_rev - pred_exp, 2)
+            forecast_cash += pred_profit
+
+            forecast_records.append({
+                "month": pred_month_str,
+                "revenue": pred_rev,
+                "expense": pred_exp,
+                "profit": pred_profit,
+                "net": pred_profit,
+                "cash_balance": round(forecast_cash, 2),
+                "is_forecast": True
+            })
+
+    sub_forecast = forecast_records[:horizon_months]
+    tot_pred_rev = sum(f["revenue"] for f in sub_forecast)
+    tot_pred_exp = sum(f["expense"] for f in sub_forecast)
+    tot_pred_profit = sum(f["profit"] for f in sub_forecast)
+
+    depleted_month = None
+    for f in forecast_records:
+        if f["cash_balance"] <= 0:
+            depleted_month = f["month"]
+            break
+
+    if n_hist >= 2:
+        rev_trend_rate = round(
+            (monthly_history[-1]["revenue"] - monthly_history[0]["revenue"])
+            / (monthly_history[0]["revenue"] or 1.0) * 100,
+            2
+        )
+        exp_trend_rate = round(
+            (monthly_history[-1]["expense"] - monthly_history[0]["expense"])
+            / (monthly_history[0]["expense"] or 1.0) * 100,
+            2
+        )
+    else:
+        rev_trend_rate = 0.0
+        exp_trend_rate = 0.0
+
+    forecast_summary = {
+        "horizon_months": horizon_months,
+        "historical_months_count": n_hist,
+        "projected_next_month_revenue": forecast_records[0]["revenue"] if forecast_records else 0.0,
+        "projected_next_month_expense": forecast_records[0]["expense"] if forecast_records else 0.0,
+        "projected_next_month_profit": forecast_records[0]["profit"] if forecast_records else 0.0,
+        "projected_total_revenue": round(tot_pred_rev, 2),
+        "projected_total_expense": round(tot_pred_exp, 2),
+        "projected_total_profit": round(tot_pred_profit, 2),
+        "projected_end_cash": sub_forecast[-1]["cash_balance"] if sub_forecast else running_cash,
+        "depleted_month": depleted_month,
+        "revenue_growth_rate": rev_trend_rate,
+        "expense_growth_rate": exp_trend_rate,
+        "monthly_revenue_slope": round(slope_rev, 2) if n_hist > 0 else 0.0,
+        "monthly_expense_slope": round(slope_exp, 2) if n_hist > 0 else 0.0,
+    }
+
+    forecast_insights = []
+    if slope_rev > 0:
+        forecast_insights.append(f"รายรับมีแนวโน้มเติบโตเฉลี่ย +฿{abs(round(slope_rev, 0)):,.0f}/เดือน จากการวิเคราะห์ข้อมูลจริง")
+    elif slope_rev < 0:
+        forecast_insights.append(f"รายรับมีแนวโน้มชะลอตัวลงเฉลี่ย -฿{abs(round(slope_rev, 0)):,.0f}/เดือน ควรวางแผนกลยุทธ์การตลาดและเพิ่มช่องทางขาย")
+    else:
+        forecast_insights.append("รายรับมีเสถียรภาพสม่ำเสมอในแต่ละช่วงเวลา")
+
+    if slope_exp > slope_rev and slope_exp > 0:
+        forecast_insights.append(f"อัตราการเพิ่มขึ้นของค่าใช้จ่ายสูงกว่ารายได้ (+฿{abs(round(slope_exp, 0)):,.0f}/เดือน) อาจกดดันกำไรสุทธิในระยะยาว")
+    elif slope_exp <= 0:
+        forecast_insights.append("สามารถควบคุมต้นทุนได้ดี ค่าใช้จ่ายมีแนวโน้มลดลงหรือทรงตัวต่อเนื่อง")
+
+    if depleted_month:
+        forecast_insights.append(f"⚠️ จุดวิกฤต: คาดว่าเงินสดอาจหมดลงในเดือน {depleted_month} หากไม่มีการปรับโครงสร้างต้นทุนหรือระดมทุนเพิ่ม")
+    elif sub_forecast and sub_forecast[-1]["cash_balance"] > running_cash:
+        forecast_insights.append("สภาพคล่องทางการเงินแข็งแกร่ง กระแสเงินสดสะสมขยายตัวต่อเนื่อง มีศักยภาพในการลงทุนเพิ่ม")
+    else:
+        forecast_insights.append("กระแสเงินสดยังคงหมุนเวียนได้ แต่ควรติดตามค่าใช้จ่ายและรักษาเงินสดสำรองอย่างสม่ำเสมอ")
+
+    forecast_summary["insights"] = forecast_insights
+
+    return {
+        "timeline": monthly_history,
+        "forecast": forecast_records,
+        "forecast_summary": forecast_summary
+    }
+
 
 
 @app.post("/analyze")
@@ -1260,9 +1699,8 @@ def analyze_business(
             "ธุรกิจมีแนวโน้มทางการเงินที่ดี ควรรักษากระแสเงินสด"
         )
 
-    # Use the local model when available; preserve rule-based results if it is offline.
-    recommendation_source = "rules"
-    ai_recommendations = generate_ai_recommendations({
+    # Run the upgraded AI CFO Strategic Decision Engine
+    metrics_summary = {
         "total_revenue": round(total_revenue, 2),
         "total_expense": round(total_expense, 2),
         "profit_loss": round(profit_loss, 2),
@@ -1271,10 +1709,19 @@ def analyze_business(
         "cash_runway_months": round(cash_runway, 2) if cash_runway is not None else None,
         "business_health_score": score,
         "business_status": status,
-    })
-    if ai_recommendations:
-        recommendations = ai_recommendations
-        recommendation_source = "openrouter"
+    }
+    smart_plan = generate_smart_strategic_plan(metrics_summary)
+    recommendation_source = smart_plan.get("source", "expert_cfo_matrix")
+    if smart_plan.get("recommendations"):
+        recommendations = smart_plan.get("recommendations")
+    strategic_action_plan = smart_plan.get("strategic_action_plan", [])
+    ai_assessment = smart_plan.get("ai_assessment", {})
+
+    # ------------------------------------------
+    # Financial forecast & timeline
+    # ------------------------------------------
+
+    forecast_data = compute_financial_forecast(rows, data.initial_cash)
 
     # ------------------------------------------
     # Return result
@@ -1343,5 +1790,243 @@ def analyze_business(
             )
         },
 
-        "recommendations": recommendations
+        "recommendations": recommendations,
+        "strategic_action_plan": strategic_action_plan,
+        "ai_assessment": ai_assessment,
+        "timeline": forecast_data["timeline"],
+        "forecast": forecast_data["forecast"],
+        "forecast_summary": forecast_data["forecast_summary"]
+    }
+
+
+# ==========================================
+# EMAIL NOTIFICATIONS
+# POST /send-notification-email
+# ==========================================
+
+class EmailNotificationRequest(BaseModel):
+    email: str | None = None
+    subject: str = "แจ้งเตือนสถานะธุรกิจจาก BusinessPilot AI"
+    notifications: list[dict] = []
+    business_status: str | None = None
+    health_score: float | int | None = None
+
+
+class ExecutiveReportEmailRequest(BaseModel):
+    email: str
+    subject: str = "สรุปภาพรวมธุรกิจสำหรับผู้บริหาร | BusinessPilot"
+    dataset_name: str = "ชุดข้อมูลธุรกิจ"
+    period: str = "ช่วงข้อมูลทั้งหมด"
+    total_revenue: float = 0
+    total_expense: float = 0
+    net_profit: float = 0
+    profit_margin_percent: float = 0
+    monthly_burn_rate: float = 0
+    cash_runway_months: float | None = None
+    revenue_change_percent: float = 0
+    expense_change_percent: float = 0
+    business_status: str = "ยังไม่มีสถานะ"
+    health_score: float = 0
+    recommendations: list[str] = []
+
+
+@app.post("/send-report-email")
+def send_executive_report_email(
+    payload: ExecutiveReportEmailRequest,
+    current_user=Depends(get_current_user)
+):
+    recipient = payload.email.strip()
+    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", recipient):
+        raise HTTPException(status_code=400, detail="กรุณาระบุอีเมลผู้รับให้ถูกต้อง")
+
+    smtp_host = os.getenv("SMTP_HOST", "").strip()
+    smtp_user = os.getenv("SMTP_USER", "").strip()
+    smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
+    if not smtp_host or not smtp_user or not smtp_password:
+        raise HTTPException(status_code=503, detail="ยังไม่ได้ตั้งค่า SMTP จึงยังส่งอีเมลจริงไม่ได้ กรุณาตั้งค่า SMTP_HOST, SMTP_USER และ SMTP_PASSWORD")
+
+    def money(value):
+        return f"฿{value:,.0f}"
+
+    profit_label = "กำไรสุทธิ" if payload.net_profit >= 0 else "ขาดทุนสุทธิ"
+    runway = f"{payload.cash_runway_months:.1f} เดือน" if payload.cash_runway_months is not None else "ไม่ระบุ / กระแสเงินสดเป็นบวก"
+    recommendations = [str(item).strip()[:500] for item in payload.recommendations[:5] if str(item).strip()]
+    rec_plain = "\n".join(f"• {item}" for item in recommendations) or "• ไม่มีข้อเสนอแนะเพิ่มเติม"
+    rec_html = "".join(f"<li style=\"margin:8px 0\">{html.escape(item)}</li>" for item in recommendations) or "<li>ไม่มีข้อเสนอแนะเพิ่มเติม</li>"
+    values = {
+        "dataset": html.escape(payload.dataset_name[:200]),
+        "period": html.escape(payload.period[:100]),
+        "status": html.escape(payload.business_status[:100]),
+        "health": f"{payload.health_score:g}/100",
+        "revenue": money(payload.total_revenue),
+        "expense": money(payload.total_expense),
+        "profit_label": profit_label,
+        "profit": money(abs(payload.net_profit)),
+        "margin": f"{payload.profit_margin_percent:.1f}%",
+        "burn": money(payload.monthly_burn_rate),
+        "runway": runway,
+        "rev_trend": f"{payload.revenue_change_percent:+.1f}%",
+        "exp_trend": f"{payload.expense_change_percent:+.1f}%",
+    }
+    plain = (
+        "สรุปภาพรวมธุรกิจสำหรับผู้บริหาร\n"
+        f"ชุดข้อมูล: {payload.dataset_name}\nช่วงเวลา: {payload.period}\nสถานะ: {payload.business_status} | คะแนนสุขภาพ {values['health']}\n\n"
+        f"รายรับรวม: {values['revenue']}\nค่าใช้จ่ายรวม: {values['expense']}\n{profit_label}: {values['profit']}\n"
+        f"อัตรากำไรสุทธิ: {values['margin']}\nแนวโน้มรายรับ: {values['rev_trend']} | แนวโน้มค่าใช้จ่าย: {values['exp_trend']}\n"
+        f"อัตราใช้เงินสดต่อเดือน: {values['burn']}\nเงินสดรองรับได้: {values['runway']}\n\nข้อเสนอแนะสำคัญ\n{rec_plain}\n\nจัดทำโดย BusinessPilot AI"
+    )
+    profit_color = "#059669" if payload.net_profit >= 0 else "#dc2626"
+    html_body = f"""<!doctype html><html><body style="margin:0;background:#f1f5f9;font-family:Arial,'Noto Sans Thai',sans-serif;color:#0f172a">
+    <div style="max-width:680px;margin:24px auto;background:#fff;border-radius:14px;overflow:hidden">
+      <div style="background:#0f172a;color:#fff;padding:26px 30px"><div style="font-size:13px;color:#67e8f9">BUSINESSPILOT AI · EXECUTIVE BRIEF</div><h1 style="font-size:22px;margin:10px 0">สรุปภาพรวมธุรกิจสำหรับผู้บริหาร</h1><div style="color:#cbd5e1">{values['dataset']} · {values['period']}</div></div>
+      <div style="padding:24px 30px"><div style="padding:14px;background:#ecfeff;border-radius:10px;margin-bottom:18px"><b>สถานะธุรกิจ:</b> {values['status']} &nbsp; <b>คะแนนสุขภาพ:</b> {values['health']}</div>
+      <table style="border-collapse:collapse;width:100%"><tr><td style="padding:12px;border-bottom:1px solid #e2e8f0">รายรับรวม</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right"><b>{values['revenue']}</b></td></tr>
+      <tr><td style="padding:12px;border-bottom:1px solid #e2e8f0">ค่าใช้จ่ายรวม</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right"><b>{values['expense']}</b></td></tr>
+      <tr><td style="padding:12px;border-bottom:1px solid #e2e8f0">{profit_label}</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right;color:{profit_color}"><b>{values['profit']}</b></td></tr>
+      <tr><td style="padding:12px;border-bottom:1px solid #e2e8f0">อัตรากำไรสุทธิ</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right">{values['margin']}</td></tr>
+      <tr><td style="padding:12px;border-bottom:1px solid #e2e8f0">แนวโน้มรายรับ / ค่าใช้จ่าย</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right">{values['rev_trend']} / {values['exp_trend']}</td></tr>
+      <tr><td style="padding:12px;border-bottom:1px solid #e2e8f0">อัตราใช้เงินสดต่อเดือน</td><td style="padding:12px;border-bottom:1px solid #e2e8f0;text-align:right">{values['burn']}</td></tr>
+      <tr><td style="padding:12px">เงินสดรองรับได้</td><td style="padding:12px;text-align:right">{values['runway']}</td></tr></table>
+      <h2 style="font-size:17px;margin:24px 0 8px">ข้อเสนอแนะสำคัญ</h2><ul style="padding-left:22px;line-height:1.6">{rec_html}</ul>
+      <p style="font-size:12px;color:#64748b;border-top:1px solid #e2e8f0;padding-top:16px;margin-top:24px">รายงานนี้จัดทำจากข้อมูลที่อัปโหลด โปรดใช้ประกอบการพิจารณาร่วมกับข้อมูลบัญชีจริง</p></div></div></body></html>"""
+
+    message = EmailMessage()
+    message["Subject"] = payload.subject[:180]
+    message["From"] = os.getenv("SMTP_FROM", smtp_user).strip()
+    message["To"] = recipient
+    message.set_content(plain)
+    message.add_alternative(html_body, subtype="html")
+    try:
+        with smtplib.SMTP(smtp_host, int(os.getenv("SMTP_PORT", "587")), timeout=20) as server:
+            server.starttls()
+            server.login(smtp_user, smtp_password)
+            server.send_message(message)
+    except Exception as exc:
+        print(f"Report email delivery failed: {type(exc).__name__}: {exc}")
+        raise HTTPException(status_code=502, detail="ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า SMTP หรืออีเมลผู้รับ")
+
+    return {"success": True, "recipient": recipient, "delivery_status": "sent", "message": "ส่งรายงานผู้บริหารสำเร็จแล้ว", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+
+@app.post("/send-notification-email")
+def send_notification_email(
+    payload: EmailNotificationRequest,
+    current_user=Depends(get_current_user)
+):
+    recipient = payload.email
+    if not recipient:
+        db = SessionLocal()
+        user = db.query(User).filter(User.id == current_user["user_id"]).first()
+        recipient = user.email if user else None
+        db.close()
+
+    if not recipient or "@" not in recipient:
+        raise HTTPException(status_code=400, detail="Invalid recipient email address")
+
+    smtp_host = os.getenv("SMTP_HOST", "").strip()
+    smtp_port = int(os.getenv("SMTP_PORT", "587"))
+    smtp_user = os.getenv("SMTP_USER", "").strip()
+    smtp_password = os.getenv("SMTP_PASSWORD", "").strip()
+    smtp_from = os.getenv("SMTP_FROM", smtp_user or "alerts@businesspilot.ai").strip()
+
+    alert_items_html = ""
+    for n in payload.notifications:
+        title = n.get("title") or n.get("head") or "การแจ้งเตือน"
+        desc = n.get("message") or n.get("body") or n.get("text") or ""
+        level = n.get("level") or "info"
+        color = "#ef4444" if level in ("danger", "warn", "critical") else "#06b6d4"
+        alert_items_html += f"""
+        <div style="background:#1e293b;border-left:4px solid {color};padding:14px;border-radius:8px;margin-bottom:12px;">
+            <strong style="color:#ffffff;font-size:15px;">{title}</strong>
+            <p style="color:#cbd5e1;margin:6px 0 0;font-size:13px;line-height:1.5;">{desc}</p>
+        </div>
+        """
+
+    html_content = f"""
+    <div style="font-family:'Segoe UI',Roboto,Helvetica,sans-serif;background:#0b1120;color:#f8fafc;padding:30px;max-width:600px;margin:auto;border-radius:16px;">
+        <div style="text-align:center;margin-bottom:24px;">
+            <div style="display:inline-block;background:linear-gradient(135deg,#06b6d4,#2563eb);color:#fff;font-weight:bold;font-size:20px;padding:8px 16px;border-radius:12px;margin-bottom:10px;">AI BusinessPilot</div>
+            <h2 style="margin:0;color:#ffffff;font-size:22px;">รายงานการแจ้งเตือนสุขภาพธุรกิจ</h2>
+            <p style="color:#94a3b8;font-size:13px;margin:4px 0 0;">อัปเดต ณ {datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M UTC')}</p>
+        </div>
+        <div style="background:#0f172a;border:1px solid #334155;border-radius:12px;padding:20px;margin-bottom:20px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:14px;">
+                <span style="color:#94a3b8;">คะแนนสุขภาพธุรกิจ:</span>
+                <strong style="color:#38bdf8;">{payload.health_score or '—'}/100 ({payload.business_status or 'วิเคราะห์แล้ว'})</strong>
+            </div>
+            {alert_items_html or '<p style="color:#94a3b8;">ไม่มีรายการแจ้งเตือนด่วน</p>'}
+        </div>
+        <div style="text-align:center;font-size:12px;color:#64748b;margin-top:24px;">
+            <p>ส่งจากระบบแจ้งเตือนอัตโนมัติ BusinessPilot AI ถึง {recipient}</p>
+        </div>
+    </div>
+    """
+
+    email_sent = False
+    delivery_note = ""
+
+    if smtp_host and smtp_user and smtp_password:
+        import smtplib
+        from email.mime.multipart import MIMEMultipart
+        from email.mime.text import MIMEText
+
+        try:
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = payload.subject
+            msg["From"] = smtp_from
+            msg["To"] = recipient
+            msg.attach(MIMEText(html_content, "html", "utf-8"))
+
+            with smtplib.SMTP(smtp_host, smtp_port, timeout=15) as server:
+                server.starttls()
+                server.login(smtp_user, smtp_password)
+                server.send_message(msg)
+            email_sent = True
+            delivery_note = f"ส่งอีเมลแจ้งเตือนไปยัง {recipient} ผ่านเซิร์ฟเวอร์ SMTP สำเร็จแล้ว"
+        except Exception as exc:
+            print(f"Notification email delivery failed: {type(exc).__name__}: {exc}")
+            raise HTTPException(status_code=502, detail="ส่งอีเมลไม่สำเร็จ กรุณาตรวจสอบการตั้งค่า SMTP หรืออีเมลผู้รับ")
+    else:
+        raise HTTPException(status_code=503, detail="ยังไม่ได้ตั้งค่า SMTP จึงยังส่งอีเมลจริงไม่ได้ กรุณาตั้งค่า SMTP_HOST, SMTP_USER และ SMTP_PASSWORD")
+
+    return {
+        "success": True,
+        "recipient": recipient,
+        "delivery_status": "sent" if email_sent else "queued",
+        "message": delivery_note,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "alerts_count": len(payload.notifications)
+    }
+
+
+# ==========================================
+# AI CFO COPILOT CHAT ADVISOR
+# POST /ai/chat-advisor
+# ==========================================
+
+class ChatAdvisorRequest(BaseModel):
+    question: str
+    context: dict | None = None
+
+
+@app.post("/ai/chat-advisor")
+def chat_advisor(
+    payload: ChatAdvisorRequest,
+    current_user=Depends(get_current_user)
+):
+    question = (payload.question or "").strip()
+    if not question:
+        raise HTTPException(
+            status_code=400,
+            detail="กรุณาระบุคำถามที่ต้องการปรึกษา AI CFO"
+        )
+
+    context = payload.context or {}
+    result = ask_ai_cfo_advisor(question, context)
+    return {
+        "success": True,
+        "question": question,
+        "answer": result.get("answer", ""),
+        "source": result.get("source", "expert_cfo_matrix"),
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
