@@ -49,10 +49,7 @@ function initRecommendationPage() {
 }
 
 function getApiBaseUrl() {
-    return window.BUSINESSPILOT_API_URL || 
-        ((window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") 
-            ? "http://localhost:8000" 
-            : "https://businesspilot-ai-backend.onrender.com");
+    return window.BUSINESSPILOT_API_URL || window.location.origin;
 }
 
 function renderEmptyState() {
@@ -61,16 +58,16 @@ function renderEmptyState() {
         banner.innerHTML = `
             <div class="text-center py-8">
                 <i class="fa-solid fa-robot text-4xl text-cyan-400 mb-3"></i>
-                <h3 class="text-xl font-bold text-white mb-2">ยังไม่มีผลวิเคราะห์สำหรับธุรกิจของคุณ</h3>
+                <h3 class="text-xl font-bold text-white mb-2">à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸œà¸¥à¸§à¸´à¹€à¸„à¸£à¸²à¸°à¸«à¹Œà¸ªà¸³à¸«à¸£à¸±à¸šà¸˜à¸¸à¸£à¸à¸´à¸ˆà¸‚à¸­à¸‡à¸„à¸¸à¸“</h3>
                 <p class="text-slate-400 text-sm max-w-lg mx-auto mb-5">
-                    คุณยังไม่ได้อัปโหลดไฟล์ CSV เพื่อประเมินสุขภาพการเงิน กรุณาอัปโหลดไฟล์ หรือคลิกปุ่มด้านล่างเพื่อโหลดข้อมูลตัวอย่างสำหรับทดสอบ
+                    à¸„à¸¸à¸“à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸­à¸±à¸›à¹‚à¸«à¸¥à¸”à¹„à¸Ÿà¸¥à¹Œ CSV à¹€à¸žà¸·à¹ˆà¸­à¸›à¸£à¸°à¹€à¸¡à¸´à¸™à¸ªà¸¸à¸‚à¸ à¸²à¸žà¸à¸²à¸£à¹€à¸‡à¸´à¸™ à¸à¸£à¸¸à¸“à¸²à¸­à¸±à¸›à¹‚à¸«à¸¥à¸”à¹„à¸Ÿà¸¥à¹Œ à¸«à¸£à¸·à¸­à¸„à¸¥à¸´à¸à¸›à¸¸à¹ˆà¸¡à¸”à¹‰à¸²à¸™à¸¥à¹ˆà¸²à¸‡à¹€à¸žà¸·à¹ˆà¸­à¹‚à¸«à¸¥à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸•à¸±à¸§à¸­à¸¢à¹ˆà¸²à¸‡à¸ªà¸³à¸«à¸£à¸±à¸šà¸—à¸”à¸ªà¸­à¸š
                 </p>
                 <div class="flex justify-center gap-3">
                     <a href="upload_data.html" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold text-sm hover:opacity-90">
-                        <i class="fa-solid fa-file-arrow-up mr-2"></i>อัปโหลด CSV ตอนนี้
+                        <i class="fa-solid fa-file-arrow-up mr-2"></i>à¸­à¸±à¸›à¹‚à¸«à¸¥à¸” CSV à¸•à¸­à¸™à¸™à¸µà¹‰
                     </a>
                     <button id="loadDemoBtn" class="px-5 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-cyan-300 font-semibold text-sm hover:bg-slate-750">
-                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>โหลดข้อมูลตัวอย่าง (Demo)
+                        <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>à¹‚à¸«à¸¥à¸”à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸•à¸±à¸§à¸­à¸¢à¹ˆà¸²à¸‡ (Demo)
                     </button>
                 </div>
             </div>
@@ -92,55 +89,55 @@ function loadDemoData() {
         trends: { revenue_change_percent: -4.5, expense_change_percent: 6.8 },
         recommendation_source: "expert_cfo_matrix",
         ai_assessment: {
-            overall_diagnosis: "ธุรกิจมีรายจ่ายสูงกว่ารายได้เล็กน้อยและยอดขายลดลง 4.5% ขณะที่เงินสดสำรองพอรองรับได้ประมาณ 4.2 เดือน จึงจำเป็นต้องเร่งบริหารเงินทุนหมุนเวียนและปรับแผนการขาย",
-            primary_bottleneck: "การเติบโตของค่าใช้จ่ายโตเร็วกว่ารายรับ ส่งผลให้กระแสเงินสดติดลบ ฿35,000 ต่อเดือน",
-            recommended_30day_focus: "ลดค่าใช้จ่ายดำเนินงานที่ไม่จำเป็น 10-15% และกระตุ้นยอดขายกับฐานลูกค้าเดิมทันที"
+            overall_diagnosis: "à¸˜à¸¸à¸£à¸à¸´à¸ˆà¸¡à¸µà¸£à¸²à¸¢à¸ˆà¹ˆà¸²à¸¢à¸ªà¸¹à¸‡à¸à¸§à¹ˆà¸²à¸£à¸²à¸¢à¹„à¸”à¹‰à¹€à¸¥à¹‡à¸à¸™à¹‰à¸­à¸¢à¹à¸¥à¸°à¸¢à¸­à¸”à¸‚à¸²à¸¢à¸¥à¸”à¸¥à¸‡ 4.5% à¸‚à¸“à¸°à¸—à¸µà¹ˆà¹€à¸‡à¸´à¸™à¸ªà¸”à¸ªà¸³à¸£à¸­à¸‡à¸žà¸­à¸£à¸­à¸‡à¸£à¸±à¸šà¹„à¸”à¹‰à¸›à¸£à¸°à¸¡à¸²à¸“ 4.2 à¹€à¸”à¸·à¸­à¸™ à¸ˆà¸¶à¸‡à¸ˆà¸³à¹€à¸›à¹‡à¸™à¸•à¹‰à¸­à¸‡à¹€à¸£à¹ˆà¸‡à¸šà¸£à¸´à¸«à¸²à¸£à¹€à¸‡à¸´à¸™à¸—à¸¸à¸™à¸«à¸¡à¸¸à¸™à¹€à¸§à¸µà¸¢à¸™à¹à¸¥à¸°à¸›à¸£à¸±à¸šà¹à¸œà¸™à¸à¸²à¸£à¸‚à¸²à¸¢",
+            primary_bottleneck: "à¸à¸²à¸£à¹€à¸•à¸´à¸šà¹‚à¸•à¸‚à¸­à¸‡à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¹‚à¸•à¹€à¸£à¹‡à¸§à¸à¸§à¹ˆà¸²à¸£à¸²à¸¢à¸£à¸±à¸š à¸ªà¹ˆà¸‡à¸œà¸¥à¹ƒà¸«à¹‰à¸à¸£à¸°à¹à¸ªà¹€à¸‡à¸´à¸™à¸ªà¸”à¸•à¸´à¸”à¸¥à¸š à¸¿35,000 à¸•à¹ˆà¸­à¹€à¸”à¸·à¸­à¸™",
+            recommended_30day_focus: "à¸¥à¸”à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¸”à¸³à¹€à¸™à¸´à¸™à¸‡à¸²à¸™à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸ˆà¸³à¹€à¸›à¹‡à¸™ 10-15% à¹à¸¥à¸°à¸à¸£à¸°à¸•à¸¸à¹‰à¸™à¸¢à¸­à¸”à¸‚à¸²à¸¢à¸à¸±à¸šà¸à¸²à¸™à¸¥à¸¹à¸à¸„à¹‰à¸²à¹€à¸”à¸´à¸¡à¸—à¸±à¸™à¸—à¸µ"
         },
         strategic_action_plan: [
             {
                 id: "demo_cash_runway",
-                category: "การบริหารเงินสด",
+                category: "à¸à¸²à¸£à¸šà¸£à¸´à¸«à¸²à¸£à¹€à¸‡à¸´à¸™à¸ªà¸”",
                 priority: "CRITICAL",
-                impact: "ยืดอายุเงินสดทันที +2.0 เดือน (ประหยัดเงินสดสำรอง ฿40,000)",
-                title: "มาตรการรักษาสภาพคล่องและบริหารเงินทุนหมุนเวียน (Cash Defense)",
-                rationale: "ระยะเวลาเงินสดเหลือ 4.2 เดือน เสี่ยงเข้าสู่ภาวะตึงตัวหากยอดขายยังติดลบต่อเนื่อง",
+                impact: "à¸¢à¸·à¸”à¸­à¸²à¸¢à¸¸à¹€à¸‡à¸´à¸™à¸ªà¸”à¸—à¸±à¸™à¸—à¸µ +2.0 à¹€à¸”à¸·à¸­à¸™ (à¸›à¸£à¸°à¸«à¸¢à¸±à¸”à¹€à¸‡à¸´à¸™à¸ªà¸”à¸ªà¸³à¸£à¸­à¸‡ à¸¿40,000)",
+                title: "à¸¡à¸²à¸•à¸£à¸à¸²à¸£à¸£à¸±à¸à¸©à¸²à¸ªà¸ à¸²à¸žà¸„à¸¥à¹ˆà¸­à¸‡à¹à¸¥à¸°à¸šà¸£à¸´à¸«à¸²à¸£à¹€à¸‡à¸´à¸™à¸—à¸¸à¸™à¸«à¸¡à¸¸à¸™à¹€à¸§à¸µà¸¢à¸™ (Cash Defense)",
+                rationale: "à¸£à¸°à¸¢à¸°à¹€à¸§à¸¥à¸²à¹€à¸‡à¸´à¸™à¸ªà¸”à¹€à¸«à¸¥à¸·à¸­ 4.2 à¹€à¸”à¸·à¸­à¸™ à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹€à¸‚à¹‰à¸²à¸ªà¸¹à¹ˆà¸ à¸²à¸§à¸°à¸•à¸¶à¸‡à¸•à¸±à¸§à¸«à¸²à¸à¸¢à¸­à¸”à¸‚à¸²à¸¢à¸¢à¸±à¸‡à¸•à¸´à¸”à¸¥à¸šà¸•à¹ˆà¸­à¹€à¸™à¸·à¹ˆà¸­à¸‡",
                 action_steps: [
-                    "เจรจาขอขยายเครดิตเทอมซัพพลายเออร์หลักจาก 30 วัน เป็น 45 วัน",
-                    "ตั้งระบบติดตามยอดค้างชำระจากลูกค้า (A/R) พร้อมมอบส่วนลด 2% เมื่อจ่ายภายใน 7 วัน",
-                    "ทบทวนการลงทุนและชะลอการซื้อสินทรัพย์ถาวรที่ไม่ก่อให้เกิดรายได้ในทันที"
+                    "à¹€à¸ˆà¸£à¸ˆà¸²à¸‚à¸­à¸‚à¸¢à¸²à¸¢à¹€à¸„à¸£à¸”à¸´à¸•à¹€à¸—à¸­à¸¡à¸‹à¸±à¸žà¸žà¸¥à¸²à¸¢à¹€à¸­à¸­à¸£à¹Œà¸«à¸¥à¸±à¸à¸ˆà¸²à¸ 30 à¸§à¸±à¸™ à¹€à¸›à¹‡à¸™ 45 à¸§à¸±à¸™",
+                    "à¸•à¸±à¹‰à¸‡à¸£à¸°à¸šà¸šà¸•à¸´à¸”à¸•à¸²à¸¡à¸¢à¸­à¸”à¸„à¹‰à¸²à¸‡à¸Šà¸³à¸£à¸°à¸ˆà¸²à¸à¸¥à¸¹à¸à¸„à¹‰à¸² (A/R) à¸žà¸£à¹‰à¸­à¸¡à¸¡à¸­à¸šà¸ªà¹ˆà¸§à¸™à¸¥à¸” 2% à¹€à¸¡à¸·à¹ˆà¸­à¸ˆà¹ˆà¸²à¸¢à¸ à¸²à¸¢à¹ƒà¸™ 7 à¸§à¸±à¸™",
+                    "à¸—à¸šà¸—à¸§à¸™à¸à¸²à¸£à¸¥à¸‡à¸—à¸¸à¸™à¹à¸¥à¸°à¸Šà¸°à¸¥à¸­à¸à¸²à¸£à¸‹à¸·à¹‰à¸­à¸ªà¸´à¸™à¸—à¸£à¸±à¸žà¸¢à¹Œà¸–à¸²à¸§à¸£à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸à¹ˆà¸­à¹ƒà¸«à¹‰à¹€à¸à¸´à¸”à¸£à¸²à¸¢à¹„à¸”à¹‰à¹ƒà¸™à¸—à¸±à¸™à¸—à¸µ"
                 ],
-                kpi_to_track: "Cash Runway > 6 เดือน และ อัตราการเก็บหนี้ (DSO)",
-                timeframe: "ภายใน 7-14 วัน"
+                kpi_to_track: "Cash Runway > 6 à¹€à¸”à¸·à¸­à¸™ à¹à¸¥à¸° à¸­à¸±à¸•à¸£à¸²à¸à¸²à¸£à¹€à¸à¹‡à¸šà¸«à¸™à¸µà¹‰ (DSO)",
+                timeframe: "à¸ à¸²à¸¢à¹ƒà¸™ 7-14 à¸§à¸±à¸™"
             },
             {
                 id: "demo_cost_cut",
-                category: "การควบคุมต้นทุน",
+                category: "à¸à¸²à¸£à¸„à¸§à¸šà¸„à¸¸à¸¡à¸•à¹‰à¸™à¸—à¸¸à¸™",
                 priority: "HIGH",
-                impact: "ตัดลดรายจ่ายดำเนินงานลง ฿25,000/เดือน",
-                title: "ผ่าตัดโครงสร้างต้นทุนและตัดค่าใช้จ่ายที่ผลตอบแทนต่ำ (Cost Audit)",
-                rationale: "ค่าใช้จ่ายเติบโตสูงกว่ารายได้ +6.8% กดดันอัตรากำไรสุทธิ",
+                impact: "à¸•à¸±à¸”à¸¥à¸”à¸£à¸²à¸¢à¸ˆà¹ˆà¸²à¸¢à¸”à¸³à¹€à¸™à¸´à¸™à¸‡à¸²à¸™à¸¥à¸‡ à¸¿25,000/à¹€à¸”à¸·à¸­à¸™",
+                title: "à¸œà¹ˆà¸²à¸•à¸±à¸”à¹‚à¸„à¸£à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¸•à¹‰à¸™à¸—à¸¸à¸™à¹à¸¥à¸°à¸•à¸±à¸”à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¸—à¸µà¹ˆà¸œà¸¥à¸•à¸­à¸šà¹à¸—à¸™à¸•à¹ˆà¸³ (Cost Audit)",
+                rationale: "à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¹€à¸•à¸´à¸šà¹‚à¸•à¸ªà¸¹à¸‡à¸à¸§à¹ˆà¸²à¸£à¸²à¸¢à¹„à¸”à¹‰ +6.8% à¸à¸”à¸”à¸±à¸™à¸­à¸±à¸•à¸£à¸²à¸à¸³à¹„à¸£à¸ªà¸¸à¸—à¸˜à¸´",
                 action_steps: [
-                    "ตรวจสอบและยกเลิกซอฟต์แวร์/ค่าบริการรายเดือน (SaaS) ที่ไม่มีการใช้งานเป็นประจำ",
-                    "ทบทวนงบโฆษณาออนไลน์และปิดแคมเปญที่มี ROAS ต่ำกว่า 1.5x",
-                    "กำหนดเพดานการอนุมัติรายจ่ายใหม่ โดยทุกยอดเกิน ฿10,000 ต้องผ่านความเห็นชอบของผู้บริหาร"
+                    "à¸•à¸£à¸§à¸ˆà¸ªà¸­à¸šà¹à¸¥à¸°à¸¢à¸à¹€à¸¥à¸´à¸à¸‹à¸­à¸Ÿà¸•à¹Œà¹à¸§à¸£à¹Œ/à¸„à¹ˆà¸²à¸šà¸£à¸´à¸à¸²à¸£à¸£à¸²à¸¢à¹€à¸”à¸·à¸­à¸™ (SaaS) à¸—à¸µà¹ˆà¹„à¸¡à¹ˆà¸¡à¸µà¸à¸²à¸£à¹ƒà¸Šà¹‰à¸‡à¸²à¸™à¹€à¸›à¹‡à¸™à¸›à¸£à¸°à¸ˆà¸³",
+                    "à¸—à¸šà¸—à¸§à¸™à¸‡à¸šà¹‚à¸†à¸©à¸“à¸²à¸­à¸­à¸™à¹„à¸¥à¸™à¹Œà¹à¸¥à¸°à¸›à¸´à¸”à¹à¸„à¸¡à¹€à¸›à¸à¸—à¸µà¹ˆà¸¡à¸µ ROAS à¸•à¹ˆà¸³à¸à¸§à¹ˆà¸² 1.5x",
+                    "à¸à¸³à¸«à¸™à¸”à¹€à¸žà¸”à¸²à¸™à¸à¸²à¸£à¸­à¸™à¸¸à¸¡à¸±à¸•à¸´à¸£à¸²à¸¢à¸ˆà¹ˆà¸²à¸¢à¹ƒà¸«à¸¡à¹ˆ à¹‚à¸”à¸¢à¸—à¸¸à¸à¸¢à¸­à¸”à¹€à¸à¸´à¸™ à¸¿10,000 à¸•à¹‰à¸­à¸‡à¸œà¹ˆà¸²à¸™à¸„à¸§à¸²à¸¡à¹€à¸«à¹‡à¸™à¸Šà¸­à¸šà¸‚à¸­à¸‡à¸œà¸¹à¹‰à¸šà¸£à¸´à¸«à¸²à¸£"
                 ],
                 kpi_to_track: "Operating Expense Ratio (OpEx / Revenue) < 75%",
-                timeframe: "ภายใน 14 วัน"
+                timeframe: "à¸ à¸²à¸¢à¹ƒà¸™ 14 à¸§à¸±à¸™"
             },
             {
                 id: "demo_rev_boost",
-                category: "การเพิ่มยอดขาย",
+                category: "à¸à¸²à¸£à¹€à¸žà¸´à¹ˆà¸¡à¸¢à¸­à¸”à¸‚à¸²à¸¢",
                 priority: "GROWTH",
-                impact: "ฟื้นฟูยอดขายกลับมาเพิ่มขึ้น +12% ถึง +15%",
-                title: "กระตุ้นการซื้อซ้ำจากฐานลูกค้าเดิม (Customer Retention & Upsell)",
-                rationale: "รายได้ชะลอตัวลง -4.5% การรักษาลูกค้าเก่ามีต้นทุนต่ำกว่าการหาลูกค้าใหม่ 5 เท่า",
+                impact: "à¸Ÿà¸·à¹‰à¸™à¸Ÿà¸¹à¸¢à¸­à¸”à¸‚à¸²à¸¢à¸à¸¥à¸±à¸šà¸¡à¸²à¹€à¸žà¸´à¹ˆà¸¡à¸‚à¸¶à¹‰à¸™ +12% à¸–à¸¶à¸‡ +15%",
+                title: "à¸à¸£à¸°à¸•à¸¸à¹‰à¸™à¸à¸²à¸£à¸‹à¸·à¹‰à¸­à¸‹à¹‰à¸³à¸ˆà¸²à¸à¸à¸²à¸™à¸¥à¸¹à¸à¸„à¹‰à¸²à¹€à¸”à¸´à¸¡ (Customer Retention & Upsell)",
+                rationale: "à¸£à¸²à¸¢à¹„à¸”à¹‰à¸Šà¸°à¸¥à¸­à¸•à¸±à¸§à¸¥à¸‡ -4.5% à¸à¸²à¸£à¸£à¸±à¸à¸©à¸²à¸¥à¸¹à¸à¸„à¹‰à¸²à¹€à¸à¹ˆà¸²à¸¡à¸µà¸•à¹‰à¸™à¸—à¸¸à¸™à¸•à¹ˆà¸³à¸à¸§à¹ˆà¸²à¸à¸²à¸£à¸«à¸²à¸¥à¸¹à¸à¸„à¹‰à¸²à¹ƒà¸«à¸¡à¹ˆ 5 à¹€à¸—à¹ˆà¸²",
                 action_steps: [
-                    "คัดเลือกรายชื่อลูกค้าประจำ 20% แรกเพื่อมอบโปรโมชันพิเศษเฉพาะบุคคล (Exclusive Offer)",
-                    "จัดแพ็กเกจสินค้าขายดีคู่กับสินค้ามาร์จิ้นสูง (Product Bundling) เพื่อเพิ่มยอดใช้จ่ายต่อบิล",
-                    "จัดแคมเปญบอกต่อ (Referral Bonus) ให้ลูกค้าเก่าแนะนำเพื่อนโดยรับส่วนลดทั้งคู่"
+                    "à¸„à¸±à¸”à¹€à¸¥à¸·à¸­à¸à¸£à¸²à¸¢à¸Šà¸·à¹ˆà¸­à¸¥à¸¹à¸à¸„à¹‰à¸²à¸›à¸£à¸°à¸ˆà¸³ 20% à¹à¸£à¸à¹€à¸žà¸·à¹ˆà¸­à¸¡à¸­à¸šà¹‚à¸›à¸£à¹‚à¸¡à¸Šà¸±à¸™à¸žà¸´à¹€à¸¨à¸©à¹€à¸‰à¸žà¸²à¸°à¸šà¸¸à¸„à¸„à¸¥ (Exclusive Offer)",
+                    "à¸ˆà¸±à¸”à¹à¸žà¹‡à¸à¹€à¸à¸ˆà¸ªà¸´à¸™à¸„à¹‰à¸²à¸‚à¸²à¸¢à¸”à¸µà¸„à¸¹à¹ˆà¸à¸±à¸šà¸ªà¸´à¸™à¸„à¹‰à¸²à¸¡à¸²à¸£à¹Œà¸ˆà¸´à¹‰à¸™à¸ªà¸¹à¸‡ (Product Bundling) à¹€à¸žà¸·à¹ˆà¸­à¹€à¸žà¸´à¹ˆà¸¡à¸¢à¸­à¸”à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¸•à¹ˆà¸­à¸šà¸´à¸¥",
+                    "à¸ˆà¸±à¸”à¹à¸„à¸¡à¹€à¸›à¸à¸šà¸­à¸à¸•à¹ˆà¸­ (Referral Bonus) à¹ƒà¸«à¹‰à¸¥à¸¹à¸à¸„à¹‰à¸²à¹€à¸à¹ˆà¸²à¹à¸™à¸°à¸™à¸³à¹€à¸žà¸·à¹ˆà¸­à¸™à¹‚à¸”à¸¢à¸£à¸±à¸šà¸ªà¹ˆà¸§à¸™à¸¥à¸”à¸—à¸±à¹‰à¸‡à¸„à¸¹à¹ˆ"
                 ],
                 kpi_to_track: "Repeat Order Rate, Average Order Value (AOV)",
-                timeframe: "ภายใน 30 วัน"
+                timeframe: "à¸ à¸²à¸¢à¹ƒà¸™ 30 à¸§à¸±à¸™"
             }
         ]
     };
@@ -165,17 +162,17 @@ function renderDiagnosis(data) {
     const status = health.status || "Watch";
 
     const diagnosisText = assessment.overall_diagnosis || 
-        `ธุรกิจของคุณมีคะแนนสุขภาพรวม ${score}/100 (${status}) ควรให้ความสำคัญกับการรักษาสภาพคล่องและสร้างกำไรอย่างยั่งยืน`;
+        `à¸˜à¸¸à¸£à¸à¸´à¸ˆà¸‚à¸­à¸‡à¸„à¸¸à¸“à¸¡à¸µà¸„à¸°à¹à¸™à¸™à¸ªà¸¸à¸‚à¸ à¸²à¸žà¸£à¸§à¸¡ ${score}/100 (${status}) à¸„à¸§à¸£à¹ƒà¸«à¹‰à¸„à¸§à¸²à¸¡à¸ªà¸³à¸„à¸±à¸à¸à¸±à¸šà¸à¸²à¸£à¸£à¸±à¸à¸©à¸²à¸ªà¸ à¸²à¸žà¸„à¸¥à¹ˆà¸­à¸‡à¹à¸¥à¸°à¸ªà¸£à¹‰à¸²à¸‡à¸à¸³à¹„à¸£à¸­à¸¢à¹ˆà¸²à¸‡à¸¢à¸±à¹ˆà¸‡à¸¢à¸·à¸™`;
     const bottleneckText = assessment.primary_bottleneck || 
-        "อัตราส่วนค่าใช้จ่ายต่อรายรับและระยะเวลาเงินสดหมุนเวียนต้องการการเฝ้าระวัง";
+        "à¸­à¸±à¸•à¸£à¸²à¸ªà¹ˆà¸§à¸™à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¸•à¹ˆà¸­à¸£à¸²à¸¢à¸£à¸±à¸šà¹à¸¥à¸°à¸£à¸°à¸¢à¸°à¹€à¸§à¸¥à¸²à¹€à¸‡à¸´à¸™à¸ªà¸”à¸«à¸¡à¸¸à¸™à¹€à¸§à¸µà¸¢à¸™à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸à¸²à¸£à¹€à¸à¹‰à¸²à¸£à¸°à¸§à¸±à¸‡";
     const focusText = assessment.recommended_30day_focus || 
-        "รักษาวินัยการใช้เงินสดและกระตุ้นรายได้จากสินค้าที่ทำกำไรสูงสุด";
+        "à¸£à¸±à¸à¸©à¸²à¸§à¸´à¸™à¸±à¸¢à¸à¸²à¸£à¹ƒà¸Šà¹‰à¹€à¸‡à¸´à¸™à¸ªà¸”à¹à¸¥à¸°à¸à¸£à¸°à¸•à¸¸à¹‰à¸™à¸£à¸²à¸¢à¹„à¸”à¹‰à¸ˆà¸²à¸à¸ªà¸´à¸™à¸„à¹‰à¸²à¸—à¸µà¹ˆà¸—à¸³à¸à¸³à¹„à¸£à¸ªà¸¹à¸‡à¸ªà¸¸à¸”";
 
     banner.innerHTML = `
         <div class="flex flex-wrap justify-between items-center gap-3 mb-4">
             <div>
                 <span class="text-xs font-bold tracking-wider uppercase text-cyan-400">Strategic Decision Engine</span>
-                <h2 class="text-xl md:text-2xl font-bold text-white mt-1">บทวินิจฉัยและข้อเสนอแนะเชิงกลยุทธ์</h2>
+                <h2 class="text-xl md:text-2xl font-bold text-white mt-1">à¸šà¸—à¸§à¸´à¸™à¸´à¸ˆà¸‰à¸±à¸¢à¹à¸¥à¸°à¸‚à¹‰à¸­à¹€à¸ªà¸™à¸­à¹à¸™à¸°à¹€à¸Šà¸´à¸‡à¸à¸¥à¸¢à¸¸à¸—à¸˜à¹Œ</h2>
             </div>
             <div>
                 ${sourceLabel}
@@ -185,21 +182,21 @@ function renderDiagnosis(data) {
         <div class="diagnosis-grid">
             <div class="diagnosis-card overall">
                 <span class="text-xs font-semibold text-emerald-400 uppercase tracking-wide flex items-center gap-1.5 mb-1.5">
-                    <i class="fa-solid fa-stethoscope"></i> ภาพรวมสุขภาพธุรกิจ
+                    <i class="fa-solid fa-stethoscope"></i> à¸ à¸²à¸žà¸£à¸§à¸¡à¸ªà¸¸à¸‚à¸ à¸²à¸žà¸˜à¸¸à¸£à¸à¸´à¸ˆ
                 </span>
                 <p class="text-sm text-slate-200 leading-relaxed">${escapeHtml(diagnosisText)}</p>
             </div>
 
             <div class="diagnosis-card bottleneck">
                 <span class="text-xs font-semibold text-rose-400 uppercase tracking-wide flex items-center gap-1.5 mb-1.5">
-                    <i class="fa-solid fa-triangle-exclamation"></i> จุดคอขวด / ความเสี่ยงเร่งด่วน
+                    <i class="fa-solid fa-triangle-exclamation"></i> à¸ˆà¸¸à¸”à¸„à¸­à¸‚à¸§à¸” / à¸„à¸§à¸²à¸¡à¹€à¸ªà¸µà¹ˆà¸¢à¸‡à¹€à¸£à¹ˆà¸‡à¸”à¹ˆà¸§à¸™
                 </span>
                 <p class="text-sm text-slate-200 leading-relaxed">${escapeHtml(bottleneckText)}</p>
             </div>
 
             <div class="diagnosis-card focus">
                 <span class="text-xs font-semibold text-cyan-400 uppercase tracking-wide flex items-center gap-1.5 mb-1.5">
-                    <i class="fa-solid fa-bullseye"></i> เป้าหมายสำคัญใน 30 วันข้างหน้า
+                    <i class="fa-solid fa-bullseye"></i> à¹€à¸›à¹‰à¸²à¸«à¸¡à¸²à¸¢à¸ªà¸³à¸„à¸±à¸à¹ƒà¸™ 30 à¸§à¸±à¸™à¸‚à¹‰à¸²à¸‡à¸«à¸™à¹‰à¸²
                 </span>
                 <p class="text-sm text-slate-200 leading-relaxed">${escapeHtml(focusText)}</p>
             </div>
@@ -217,18 +214,18 @@ function renderStrategicActions(data, filter) {
         const simple = data.recommendations || [];
         actions = simple.map((item, idx) => ({
             id: `legacy_action_${idx}`,
-            category: "การปรับปรุงธุรกิจ",
+            category: "à¸à¸²à¸£à¸›à¸£à¸±à¸šà¸›à¸£à¸¸à¸‡à¸˜à¸¸à¸£à¸à¸´à¸ˆ",
             priority: idx === 0 ? "HIGH" : "GROWTH",
-            impact: "ปรับปรุงความมั่นคงทางการเงิน",
-            title: typeof item === "string" ? item : "ข้อเสนอแนะทางธุรกิจ",
-            rationale: "วิเคราะห์จากแนวโน้มรายได้และค่าใช้จ่ายล่าสุด",
+            impact: "à¸›à¸£à¸±à¸šà¸›à¸£à¸¸à¸‡à¸„à¸§à¸²à¸¡à¸¡à¸±à¹ˆà¸™à¸„à¸‡à¸—à¸²à¸‡à¸à¸²à¸£à¹€à¸‡à¸´à¸™",
+            title: typeof item === "string" ? item : "à¸‚à¹‰à¸­à¹€à¸ªà¸™à¸­à¹à¸™à¸°à¸—à¸²à¸‡à¸˜à¸¸à¸£à¸à¸´à¸ˆ",
+            rationale: "à¸§à¸´à¹€à¸„à¸£à¸²à¸°à¸«à¹Œà¸ˆà¸²à¸à¹à¸™à¸§à¹‚à¸™à¹‰à¸¡à¸£à¸²à¸¢à¹„à¸”à¹‰à¹à¸¥à¸°à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢à¸¥à¹ˆà¸²à¸ªà¸¸à¸”",
             action_steps: [
-                "ทบทวนตัวเลขร่วมกับทีมบริหาร",
-                "กำหนดผู้รับผิดชอบและวันแล้วเสร็จ",
-                "ติดตามผลลัพธ์ในหน้า Dashboard สัปดาห์ละครั้ง"
+                "à¸—à¸šà¸—à¸§à¸™à¸•à¸±à¸§à¹€à¸¥à¸‚à¸£à¹ˆà¸§à¸¡à¸à¸±à¸šà¸—à¸µà¸¡à¸šà¸£à¸´à¸«à¸²à¸£",
+                "à¸à¸³à¸«à¸™à¸”à¸œà¸¹à¹‰à¸£à¸±à¸šà¸œà¸´à¸”à¸Šà¸­à¸šà¹à¸¥à¸°à¸§à¸±à¸™à¹à¸¥à¹‰à¸§à¹€à¸ªà¸£à¹‡à¸ˆ",
+                "à¸•à¸´à¸”à¸•à¸²à¸¡à¸œà¸¥à¸¥à¸±à¸žà¸˜à¹Œà¹ƒà¸™à¸«à¸™à¹‰à¸² Dashboard à¸ªà¸±à¸›à¸”à¸²à¸«à¹Œà¸¥à¸°à¸„à¸£à¸±à¹‰à¸‡"
             ],
             kpi_to_track: "Net Profit & Cash Balance",
-            timeframe: "ภายใน 30 วัน"
+            timeframe: "à¸ à¸²à¸¢à¹ƒà¸™ 30 à¸§à¸±à¸™"
         }));
     }
 
@@ -236,9 +233,9 @@ function renderStrategicActions(data, filter) {
     const filtered = actions.filter(action => {
         if (filter === "all") return true;
         if (filter === "critical") return action.priority === "CRITICAL";
-        if (filter === "cash") return (action.category || "").includes("เงินสด");
-        if (filter === "cost") return (action.category || "").includes("ต้นทุน") || (action.category || "").includes("ค่าใช้จ่าย");
-        if (filter === "growth") return (action.priority === "GROWTH") || (action.category || "").includes("ยอดขาย") || (action.category || "").includes("เติบโต");
+        if (filter === "cash") return (action.category || "").includes("à¹€à¸‡à¸´à¸™à¸ªà¸”");
+        if (filter === "cost") return (action.category || "").includes("à¸•à¹‰à¸™à¸—à¸¸à¸™") || (action.category || "").includes("à¸„à¹ˆà¸²à¹ƒà¸Šà¹‰à¸ˆà¹ˆà¸²à¸¢");
+        if (filter === "growth") return (action.priority === "GROWTH") || (action.category || "").includes("à¸¢à¸­à¸”à¸‚à¸²à¸¢") || (action.category || "").includes("à¹€à¸•à¸´à¸šà¹‚à¸•");
         return true;
     });
 
@@ -246,8 +243,8 @@ function renderStrategicActions(data, filter) {
         container.innerHTML = `
             <div class="col-span-full text-center py-12 glass-panel">
                 <i class="fa-solid fa-filter text-slate-500 text-3xl mb-3"></i>
-                <h4 class="text-white font-semibold">ไม่พบมาตรการในหมวดหมู่นี้</h4>
-                <p class="text-slate-400 text-xs mt-1">ลองเลือกตัวกรอง "ทั้งหมด" เพื่อดูแผนปฏิบัติการทั้งหมด</p>
+                <h4 class="text-white font-semibold">à¹„à¸¡à¹ˆà¸žà¸šà¸¡à¸²à¸•à¸£à¸à¸²à¸£à¹ƒà¸™à¸«à¸¡à¸§à¸”à¸«à¸¡à¸¹à¹ˆà¸™à¸µà¹‰</h4>
+                <p class="text-slate-400 text-xs mt-1">à¸¥à¸­à¸‡à¹€à¸¥à¸·à¸­à¸à¸•à¸±à¸§à¸à¸£à¸­à¸‡ "à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”" à¹€à¸žà¸·à¹ˆà¸­à¸”à¸¹à¹à¸œà¸™à¸›à¸à¸´à¸šà¸±à¸•à¸´à¸à¸²à¸£à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”</p>
             </div>
         `;
         return;
@@ -277,23 +274,23 @@ function renderStrategicActions(data, filter) {
             <div class="action-card" id="card_${action.id}">
                 <div>
                     <div class="action-card-header">
-                        <span class="category-tag"><i class="fa-solid fa-tag text-xs mr-1 opacity-70"></i>${escapeHtml(action.category || 'กลยุทธ์')}</span>
+                        <span class="category-tag"><i class="fa-solid fa-tag text-xs mr-1 opacity-70"></i>${escapeHtml(action.category || 'à¸à¸¥à¸¢à¸¸à¸—à¸˜à¹Œ')}</span>
                         <span class="priority-tag ${priorityClass}">${priorityIcon} ${escapeHtml(action.priority || 'HIGH')}</span>
                     </div>
 
-                    <h3 class="action-card-title">${escapeHtml(action.title || 'มาตรการเชิงกลยุทธ์')}</h3>
+                    <h3 class="action-card-title">${escapeHtml(action.title || 'à¸¡à¸²à¸•à¸£à¸à¸²à¸£à¹€à¸Šà¸´à¸‡à¸à¸¥à¸¢à¸¸à¸—à¸˜à¹Œ')}</h3>
                     
                     <div class="action-card-rationale">
-                        <strong><i class="fa-solid fa-circle-info mr-1 text-cyan-400"></i>เหตุผล:</strong> ${escapeHtml(action.rationale || 'อิงข้อมูลจริงของธุรกิจ')}
+                        <strong><i class="fa-solid fa-circle-info mr-1 text-cyan-400"></i>à¹€à¸«à¸•à¸¸à¸œà¸¥:</strong> ${escapeHtml(action.rationale || 'à¸­à¸´à¸‡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸ˆà¸£à¸´à¸‡à¸‚à¸­à¸‡à¸˜à¸¸à¸£à¸à¸´à¸ˆ')}
                     </div>
 
                     <div class="impact-badge">
                         <i class="fa-solid fa-chart-pie text-cyan-400 text-base"></i>
-                        <span>${escapeHtml(action.impact || 'ช่วยเพิ่มประสิทธิภาพทางการเงิน')}</span>
+                        <span>${escapeHtml(action.impact || 'à¸Šà¹ˆà¸§à¸¢à¹€à¸žà¸´à¹ˆà¸¡à¸›à¸£à¸°à¸ªà¸´à¸—à¸˜à¸´à¸ à¸²à¸žà¸—à¸²à¸‡à¸à¸²à¸£à¹€à¸‡à¸´à¸™')}</span>
                     </div>
 
                     <div class="steps-title">
-                        <span><i class="fa-solid fa-list-check mr-1.5"></i>ขั้นตอนปฏิบัติการ</span>
+                        <span><i class="fa-solid fa-list-check mr-1.5"></i>à¸‚à¸±à¹‰à¸™à¸•à¸­à¸™à¸›à¸à¸´à¸šà¸±à¸•à¸´à¸à¸²à¸£</span>
                         <span class="card-progress-text text-cyan-300 font-bold">${percent}%</span>
                     </div>
 
@@ -309,11 +306,11 @@ function renderStrategicActions(data, filter) {
                 <div class="action-card-footer">
                     <div>
                         <i class="fa-solid fa-bullseye text-cyan-400 mr-1"></i>KPI: 
-                        <span class="text-slate-300">${escapeHtml(action.kpi_to_track || 'กำไรสุทธิ')}</span>
+                        <span class="text-slate-300">${escapeHtml(action.kpi_to_track || 'à¸à¸³à¹„à¸£à¸ªà¸¸à¸—à¸˜à¸´')}</span>
                     </div>
                     <div>
                         <i class="fa-regular fa-clock text-amber-400 mr-1"></i>
-                        <span class="text-slate-300">${escapeHtml(action.timeframe || 'เร็วๆ นี้')}</span>
+                        <span class="text-slate-300">${escapeHtml(action.timeframe || 'à¹€à¸£à¹‡à¸§à¹† à¸™à¸µà¹‰')}</span>
                     </div>
                 </div>
             </div>
@@ -391,7 +388,7 @@ function setupActionButtons() {
     const refreshBtn = document.getElementById("refreshPlanBtn");
     if (refreshBtn) {
         refreshBtn.addEventListener("click", () => {
-            if (confirm("ต้องการรีเซ็ตความคืบหน้าของขั้นตอนที่ทำแล้ว (Checklist) หรือไม่?")) {
+            if (confirm("à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸£à¸µà¹€à¸‹à¹‡à¸•à¸„à¸§à¸²à¸¡à¸„à¸·à¸šà¸«à¸™à¹‰à¸²à¸‚à¸­à¸‡à¸‚à¸±à¹‰à¸™à¸•à¸­à¸™à¸—à¸µà¹ˆà¸—à¸³à¹à¸¥à¹‰à¸§ (Checklist) à¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆ?")) {
                 savedCheckedSteps = {};
                 localStorage.removeItem("bp_checked_steps");
                 if (rawAnalysisData) {
@@ -471,19 +468,19 @@ function setupChatAdvisor(data) {
 
             if (!res.ok) {
                 const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.detail || "ไม่สามารถเชื่อมต่อ AI ได้");
+                throw new Error(errData.detail || "à¹„à¸¡à¹ˆà¸ªà¸²à¸¡à¸²à¸£à¸–à¹€à¸Šà¸·à¹ˆà¸­à¸¡à¸•à¹ˆà¸­ AI à¹„à¸”à¹‰");
             }
 
             const result = await res.json();
             const sourceBadge = result.source === "openrouter" 
-                ? '<span class="text-[10px] text-purple-400 font-normal ml-2">⚡ OpenRouter Cloud AI</span>' 
-                : '<span class="text-[10px] text-cyan-400 font-normal ml-2">🧠 Expert CFO Matrix</span>';
+                ? '<span class="text-[10px] text-purple-400 font-normal ml-2">âš¡ OpenRouter Cloud AI</span>' 
+                : '<span class="text-[10px] text-cyan-400 font-normal ml-2">ðŸ§  Expert CFO Matrix</span>';
 
             appendMessage("cfo", result.answer, sourceBadge);
 
         } catch (err) {
             removeElement(typingId);
-            appendMessage("cfo", `⚠️ ขัดข้อง: ${err.message || "เกิดข้อผิดพลาดในการเรียก AI CFO"} (ระบบได้เตรียมข้อมูลกลยุทธ์ในบัตรด้านบนไว้แล้ว)`);
+            appendMessage("cfo", `âš ï¸ à¸‚à¸±à¸”à¸‚à¹‰à¸­à¸‡: ${err.message || "à¹€à¸à¸´à¸”à¸‚à¹‰à¸­à¸œà¸´à¸”à¸žà¸¥à¸²à¸”à¹ƒà¸™à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸ AI CFO"} (à¸£à¸°à¸šà¸šà¹„à¸”à¹‰à¹€à¸•à¸£à¸µà¸¢à¸¡à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸à¸¥à¸¢à¸¸à¸—à¸˜à¹Œà¹ƒà¸™à¸šà¸±à¸•à¸£à¸”à¹‰à¸²à¸™à¸šà¸™à¹„à¸§à¹‰à¹à¸¥à¹‰à¸§)`);
         } finally {
             sendBtn.disabled = false;
         }
@@ -517,7 +514,7 @@ function setupChatAdvisor(data) {
         div.className = "chat-msg cfo";
         div.innerHTML = `
             <div class="flex items-center gap-2 text-cyan-400 text-xs">
-                <i class="fa-solid fa-circle-notch fa-spin"></i> AI CFO กำลังประมวลผลตัวเลขและคิดกลยุทธ์...
+                <i class="fa-solid fa-circle-notch fa-spin"></i> AI CFO à¸à¸³à¸¥à¸±à¸‡à¸›à¸£à¸°à¸¡à¸§à¸¥à¸œà¸¥à¸•à¸±à¸§à¹€à¸¥à¸‚à¹à¸¥à¸°à¸„à¸´à¸”à¸à¸¥à¸¢à¸¸à¸—à¸˜à¹Œ...
             </div>
         `;
         history.appendChild(div);
